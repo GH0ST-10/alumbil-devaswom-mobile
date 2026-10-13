@@ -11,74 +11,83 @@ function buildReceiptHTML(r) {
   const esc = s => String(s || '').replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
 
   return `
-  <div style="width:380px;background:#fffdf9;font-family:'Noto Sans Malayalam','Inter',sans-serif;border:1px solid #ecdfca;">
-    <div style="background:linear-gradient(135deg,#7a1f2b,#9c2b3a 60%,#b8860b 140%);padding:20px 18px;color:#fff;">
-      <div style="font-weight:800;font-size:19px;">ആലുമ്പിൽ ദേവസ്ഥാനം</div>
-      <div style="font-size:12.5px;opacity:0.85;margin-top:2px;">${r.occasion ? esc(r.occasion) : 'പണപ്പിരിവ് രസീത്'}</div>
+  <div style="width:390px;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans Malayalam','Inter',sans-serif;border-radius:18px;overflow:hidden;box-shadow:0 12px 36px rgba(0,0,0,0.12);border:1px solid #ecdfca;color:#1c1917;">
+    <div style="background:linear-gradient(135deg,#7a1f2b 0%,#9c2b3a 60%,#b8860b 140%);padding:22px 20px;color:#fff;display:flex;align-items:center;gap:14px;">
+      <img src="/icon.png" style="width:48px;height:48px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.4);object-fit:cover;" />
+      <div>
+        <div style="font-weight:800;font-size:19px;letter-spacing:-0.2px;">ആലുമ്പിൽ ദേവസ്ഥാനം</div>
+        <div style="font-size:12.5px;opacity:0.9;margin-top:2px;">${r.occasion ? esc(r.occasion) : 'പണപ്പിരിവ് രസീത്'}</div>
+      </div>
     </div>
-    <div style="padding:20px 18px;">
-      <div style="text-align:center;font-weight:700;color:#7a1f2b;font-size:14px;margin-bottom:14px;letter-spacing:0.04em;">രസീത്</div>
-      <table style="width:100%;font-size:13px;border-collapse:collapse;">
-        <tr><td style="color:#8a7a68;padding:4px 0;width:110px;">രസീത് നമ്പർ</td><td style="color:#2a1d12;font-weight:600;">${esc(r.receiptno || '—')}</td></tr>
-        <tr><td style="color:#8a7a68;padding:4px 0;">തീയതി</td><td style="color:#2a1d12;font-weight:600;">${esc(r.date || '—')}</td></tr>
-        <tr><td style="color:#8a7a68;padding:4px 0;">പേര്</td><td style="color:#2a1d12;font-weight:600;">${esc(r.name || '—')}</td></tr>
-        ${r.house ? `<tr><td style="color:#8a7a68;padding:4px 0;">വീട്/വിലാസം</td><td style="color:#2a1d12;font-weight:600;">${esc(r.house)}</td></tr>` : ''}
+    <div style="padding:22px 20px;">
+      <div style="text-align:center;font-weight:800;color:#7a1f2b;font-size:14px;margin-bottom:16px;letter-spacing:0.08em;text-transform:uppercase;">പണപ്പിരിവ് രസീത്</div>
+      <table style="width:100%;font-size:13.5px;border-collapse:collapse;">
+        <tr><td style="color:#78716c;padding:5px 0;width:110px;">രസീത് നമ്പർ</td><td style="color:#1c1917;font-weight:700;">${esc(r.receiptno || '—')}</td></tr>
+        <tr><td style="color:#78716c;padding:5px 0;">തീയതി</td><td style="color:#1c1917;font-weight:600;">${esc(r.date || '—')}</td></tr>
+        <tr><td style="color:#78716c;padding:5px 0;">പേര്</td><td style="color:#1c1917;font-weight:700;font-size:14.5px;">${esc(r.name || '—')}</td></tr>
+        ${r.house ? `<tr><td style="color:#78716c;padding:5px 0;">വീട്/വിലാസം</td><td style="color:#1c1917;font-weight:600;">${esc(r.house)}</td></tr>` : ''}
+        ${r.phone ? `<tr><td style="color:#78716c;padding:5px 0;">ഫോൺ</td><td style="color:#1c1917;font-weight:600;">${esc(r.phone)}</td></tr>` : ''}
       </table>
-      <div style="border-top:1px solid #ecdfca;margin:16px 0;"></div>
-      <div style="display:flex;justify-content:space-between;align-items:baseline;">
-        <div style="color:#8a7a68;font-size:12.5px;font-weight:600;">ലഭിച്ച തുക</div>
+      <div style="border-top:1.5px dashed #e7e2d9;margin:16px 0;"></div>
+      <div style="background:#fdf6e7;border:1px solid #f9e7be;border-radius:12px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="color:#78716c;font-size:13px;font-weight:600;">ലഭിച്ച തുക</div>
         <div style="color:#7a1f2b;font-size:24px;font-weight:800;">${fmt(paid)}</div>
       </div>
-      ${target > paid
-        ? `<div style="color:#8a7a68;font-size:12px;margin-top:6px;">രസീത് തുക: ${fmt(target)} &nbsp;·&nbsp; ബാക്കി: ${fmt(balance)}</div>`
-        : `<div style="color:#1f9d55;font-size:12px;margin-top:6px;font-weight:600;">പൂർണമായി അടച്ചു</div>`}
-      ${r.remarks ? `<div style="color:#8a7a68;font-size:11.5px;margin-top:12px;font-style:italic;">കുറിപ്പ്: ${esc(r.remarks)}</div>` : ''}
+      <div style="margin-top:10px;font-size:12.5px;">
+        ${target > paid
+          ? `<div style="color:#b45309;font-weight:600;">രസീത് തുക: ${fmt(target)} &nbsp;·&nbsp; ബാക്കി: ${fmt(balance)}</div>`
+          : `<div style="color:#15803d;font-weight:700;">✅ പൂർണമായി അടച്ചു</div>`}
+      </div>
+      ${r.remarks ? `<div style="color:#78716c;font-size:12px;margin-top:12px;font-style:italic;">കുറിപ്പ്: ${esc(r.remarks)}</div>` : ''}
     </div>
-    <div style="text-align:center;color:#8a7a68;font-size:10px;padding:10px 0 16px;">ആലുമ്പിൽ ദേവസ്ഥാനം കണക്ക് രജിസ്റ്ററിൽ നിന്ന് തയ്യാറാക്കിയത്</div>
+    <div style="background:#f8f6f2;text-align:center;color:#78716c;font-size:11px;padding:12px 20px;border-top:1px solid #e7e2d9;">
+      ആലുമ്പിൽ ദേവസ്ഥാനം കണക്ക് രജിസ്റ്ററിൽ നിന്ന് തയ്യാറാക്കിയത്
+    </div>
   </div>`;
 }
 
-async function renderHTMLToPDF(html, scale = 3) {
+export async function makeReceiptImageBlob(r, scale = 3) {
   const holder = document.createElement('div');
   holder.style.position = 'fixed';
   holder.style.left = '-9999px';
   holder.style.top = '0';
-  holder.innerHTML = html;
+  holder.innerHTML = buildReceiptHTML(r);
   document.body.appendChild(holder);
+
+  // Wait for layout and image loading
   await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
 
-  const canvas = await html2canvas(holder.firstElementChild, { scale, backgroundColor: '#fffdf9', useCORS: true });
+  const canvas = await html2canvas(holder.firstElementChild, {
+    scale,
+    backgroundColor: '#ffffff',
+    useCORS: true,
+    logging: false
+  });
   document.body.removeChild(holder);
 
-  const pxToMm = px => px * 0.264583;
-  const wMm = pxToMm(canvas.width / scale);
-  const hMm = pxToMm(canvas.height / scale);
-  const doc = new jsPDF({ unit: 'mm', format: [wMm, hMm] });
-  doc.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, wMm, hMm);
-  return doc.output('blob');
+  return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 }
 
-export async function makeReceiptPDF(r) {
-  return renderHTMLToPDF(buildReceiptHTML(r), 3);
-}
+import { directShareFile, shareOrSaveFile } from './nativeShare';
 
 export async function shareReceipt(r) {
-  const filename = 'Receipt_' + (r.name || 'contributor').replace(/\s+/g, '_') + '.pdf';
-  const blob = await makeReceiptPDF(r);
-  const file = new File([blob], filename, { type: 'application/pdf' });
+  const filename = 'Receipt_' + (r.name || 'contributor').replace(/\s+/g, '_') + '.png';
+  const blob = await makeReceiptImageBlob(r, 3);
+  if (!blob) return;
 
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: 'Receipt' }); return; }
-    catch (e) { if (e.name === 'AbortError') return; }
-  }
+  const success = await directShareFile({
+    blob,
+    filename,
+    mimeType: 'image/png',
+    title: 'ആലുമ്പിൽ ദേവസ്ഥാനം - രസീത്',
+    text: `നമസ്കാരം ${r.name || ''}, ആലുമ്പിൽ ദേവസ്ഥാനം പണപ്പിരിവ് രസീത് ഇതോടൊപ്പം അയക്കുന്നു 🙏`
+  });
 
-  if (r.phone) {
-    downloadBlob(blob, filename);
-    const text = `നമസ്കാരം ${r.name}, നിങ്ങളുടെ പണപ്പിരിവ് രസീത് അയക്കുന്നു. ഡൗൺലോഡ് ആയ PDF ഇവിടെ അറ്റാച്ച് ചെയ്യുക 🙏`;
+  // If on desktop and phone is available, offer quick WhatsApp link as well
+  if (r.phone && !success) {
+    const text = `നമസ്കാരം ${r.name}, നിങ്ങളുടെ പണപ്പിരിവ് രസീത് ഇമേജ് അയക്കുന്നു 🙏`;
     window.open(waLinkFor(r.phone, text), '_blank');
-    return;
   }
-  downloadBlob(blob, filename);
 }
 
 /* ====== STATEMENT HTML ====== */
@@ -101,88 +110,125 @@ function buildStatementHTML(pirivuRecords, ledgerRecords) {
   const partialCount    = pirivuRecords.filter(r => statusOf(r) === 'partial').length;
   const unpaidCount     = pirivuRecords.filter(r => statusOf(r) === 'unpaid').length;
 
-  const otherIncome  = ledgerRecords.filter(r => r.type === 'income' && !r.linkedPirivu).reduce((s, r) => s + (Number(r.amount) || 0), 0);
-  const totalIncome  = pirivuCollected + otherIncome;
-  const totalExpense = ledgerRecords.filter(r => r.type === 'expense').reduce((s, r) => s + (Number(r.amount) || 0), 0);
-  const balance      = totalIncome - totalExpense;
+  const ledgerIncome    = ledgerRecords.filter(r => r.type === 'income').reduce((s, r) => s + (Number(r.amount) || 0), 0);
+  const ledgerExpense   = ledgerRecords.filter(r => r.type === 'expense').reduce((s, r) => s + (Number(r.amount) || 0), 0);
+  const balance         = ledgerIncome - ledgerExpense;
 
-  const expByCat = {};
-  ledgerRecords.filter(r => r.type === 'expense').forEach(r => {
-    const c = r.category || 'മറ്റുള്ളവ';
-    expByCat[c] = (expByCat[c] || 0) + (Number(r.amount) || 0);
+  const incomeByCategory = {};
+  ledgerRecords.filter(r => r.type === 'income').forEach(r => {
+    const cat = r.category || 'മറ്റുള്ളവ';
+    incomeByCategory[cat] = (incomeByCategory[cat] || 0) + (Number(r.amount) || 0);
   });
-  const expRows = Object.entries(expByCat).sort((a, b) => b[1] - a[1]);
 
-  const txns = [...ledgerRecords].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
-  let running = 0;
-  const txnRows = txns.map(r => {
-    const amt = Number(r.amount) || 0;
-    running += r.type === 'income' ? amt : -amt;
-    return `<tr>
-      <td style="padding:5px 6px;border-bottom:1px solid #ecdfca;">${esc(r.date || '—')}</td>
-      <td style="padding:5px 6px;border-bottom:1px solid #ecdfca;">${esc(r.desc)}</td>
-      <td style="padding:5px 6px;border-bottom:1px solid #ecdfca;text-align:right;color:${r.type === 'income' ? '#1f9d55' : '#c0392b'};">${r.type === 'income' ? '+' : '−'}${fmt(amt)}</td>
-      <td style="padding:5px 6px;border-bottom:1px solid #ecdfca;text-align:right;font-weight:600;">${fmt(running)}</td>
-    </tr>`;
-  }).join('');
+  const expenseByCategory = {};
+  ledgerRecords.filter(r => r.type === 'expense').forEach(r => {
+    const cat = r.category || 'മറ്റുള്ളവ';
+    expenseByCategory[cat] = (expenseByCategory[cat] || 0) + (Number(r.amount) || 0);
+  });
+
+  const catRows = (cats, total) => Object.entries(cats).map(([c, a]) => `
+    <tr>
+      <td style="padding:6px 0;color:#2a1d12;">${esc(c)}</td>
+      <td style="padding:6px 0;text-align:right;font-weight:600;color:#2a1d12;">${fmt(a)}</td>
+      <td style="padding:6px 0;text-align:right;color:#8a7a68;font-size:11px;width:55px;">${total > 0 ? Math.round(a / total * 100) : 0}%</td>
+    </tr>
+  `).join('');
 
   return `
-  <div style="width:700px;background:#fffdf9;font-family:'Noto Sans Malayalam','Inter',sans-serif;">
-    <div style="background:linear-gradient(135deg,#7a1f2b,#9c2b3a 60%,#b8860b 140%);padding:26px 28px;color:#fff;">
-      <div style="font-weight:800;font-size:24px;">ആലുമ്പിൽ ദേവസ്ഥാനം</div>
-      <div style="font-size:14px;opacity:0.9;margin-top:4px;">വരവ്-ചെലവ് സ്റ്റേറ്റ്മെന്റ് — ${today}</div>
+  <div style="width:680px;background:#fffdf9;font-family:'Noto Sans Malayalam','Inter',sans-serif;color:#2a1d12;padding:32px 36px;">
+    <div style="text-align:center;border-bottom:2px solid #7a1f2b;padding-bottom:14px;margin-bottom:22px;">
+      <div style="font-size:24px;font-weight:800;color:#7a1f2b;">ആലുമ്പിൽ ദേവസ്ഥാനം</div>
+      <div style="font-size:14px;font-weight:700;color:#5c1620;margin-top:4px;">സാമ്പത്തിക സ്റ്റേറ്റ്മെന്റ് (യോഗം)</div>
+      <div style="font-size:11.5px;color:#8a7a68;margin-top:4px;">തയ്യാറാക്കിയത്: ${today}</div>
     </div>
-    <div style="padding:26px 28px;">
-      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px;">
-        <div style="flex:1;min-width:140px;background:#fbf0d9;border-radius:10px;padding:12px 14px;">
-          <div style="font-size:11px;color:#8a7a68;font-weight:600;">ആകെ വരവ്</div>
-          <div style="font-size:19px;font-weight:800;color:#1f9d55;">${fmt(totalIncome)}</div>
-        </div>
-        <div style="flex:1;min-width:140px;background:#fbf0d9;border-radius:10px;padding:12px 14px;">
-          <div style="font-size:11px;color:#8a7a68;font-weight:600;">ആകെ ചെലവ്</div>
-          <div style="font-size:19px;font-weight:800;color:#c0392b;">${fmt(totalExpense)}</div>
-        </div>
-        <div style="flex:1;min-width:140px;background:#fbf0d9;border-radius:10px;padding:12px 14px;">
-          <div style="font-size:11px;color:#8a7a68;font-weight:600;">കൈവശമുള്ള ബാക്കി</div>
-          <div style="font-size:19px;font-weight:800;color:#7a1f2b;">${fmt(balance)}</div>
-        </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;">
+      <div style="background:#fff;border:1px solid #ecdfca;border-radius:10px;padding:12px 14px;">
+        <div style="font-size:11px;color:#8a7a68;font-weight:600;">ആകെ പിരിവ് രസീത്</div>
+        <div style="font-size:18px;font-weight:800;color:#7a1f2b;margin-top:2px;">${fmt(pirivuPledged)}</div>
+        <div style="font-size:10.5px;color:#8a7a68;margin-top:3px;">ലഭിച്ചത്: ${fmt(pirivuCollected)} (${pirivuPledged > 0 ? Math.round(pirivuCollected / pirivuPledged * 100) : 0}%)</div>
       </div>
-
-      <div style="font-weight:700;color:#7a1f2b;font-size:14px;margin-bottom:10px;border-bottom:2px solid #ecdfca;padding-bottom:6px;">പണപ്പിരിവ് സംഗ്രഹം</div>
-      <table style="width:100%;font-size:12.5px;border-collapse:collapse;margin-bottom:22px;">
-        <tr><td style="padding:4px 0;color:#8a7a68;">ആകെ രസീത് ലക്ഷ്യം</td><td style="padding:4px 0;text-align:right;font-weight:700;">${fmt(pirivuPledged)}</td></tr>
-        <tr><td style="padding:4px 0;color:#8a7a68;">ആകെ പിരിഞ്ഞു കിട്ടിയത്</td><td style="padding:4px 0;text-align:right;font-weight:700;color:#1f9d55;">${fmt(pirivuCollected)}</td></tr>
-        <tr><td style="padding:4px 0;color:#8a7a68;">ബാക്കി കിട്ടാനുള്ളത്</td><td style="padding:4px 0;text-align:right;font-weight:700;color:#c0392b;">${fmt(pirivuPledged - pirivuCollected)}</td></tr>
-        <tr><td style="padding:4px 0;color:#8a7a68;">പൂർണമായി / ഭാഗികമായി / അടയ്ക്കാത്തവർ</td><td style="padding:4px 0;text-align:right;font-weight:700;">${fullCount} / ${partialCount} / ${unpaidCount}</td></tr>
-      </table>
-
-      ${expRows.length ? `
-      <div style="font-weight:700;color:#7a1f2b;font-size:14px;margin-bottom:10px;border-bottom:2px solid #ecdfca;padding-bottom:6px;">ചെലവ് — ഇനം തിരിച്ച്</div>
-      <table style="width:100%;font-size:12.5px;border-collapse:collapse;margin-bottom:22px;">
-        ${expRows.map(([cat, amt]) => `<tr><td style="padding:4px 0;color:#8a7a68;">${esc(cat)}</td><td style="padding:4px 0;text-align:right;font-weight:600;">${fmt(amt)}</td></tr>`).join('')}
-      </table>` : ''}
-
-      <div style="font-weight:700;color:#7a1f2b;font-size:14px;margin-bottom:10px;border-bottom:2px solid #ecdfca;padding-bottom:6px;">എല്ലാ ഇടപാടുകളും</div>
-      <table style="width:100%;font-size:12px;border-collapse:collapse;">
-        <tr style="background:#fbf0d9;"><th style="padding:6px;text-align:left;">തീയതി</th><th style="padding:6px;text-align:left;">വിവരണം</th><th style="padding:6px;text-align:right;">തുക</th><th style="padding:6px;text-align:right;">ബാക്കി</th></tr>
-        ${txnRows || '<tr><td colspan="4" style="padding:10px;color:#8a7a68;text-align:center;">ഇടപാടുകളൊന്നുമില്ല</td></tr>'}
-      </table>
+      <div style="background:#fff;border:1px solid #ecdfca;border-radius:10px;padding:12px 14px;">
+        <div style="font-size:11px;color:#8a7a68;font-weight:600;">കൈവശമുള്ള ബാക്കി</div>
+        <div style="font-size:18px;font-weight:800;color:#1f9d55;margin-top:2px;">${fmt(balance)}</div>
+        <div style="font-size:10.5px;color:#8a7a68;margin-top:3px;">വരവ്: ${fmt(ledgerIncome)} · ചെലവ്: ${fmt(ledgerExpense)}</div>
+      </div>
     </div>
-    <div style="text-align:center;color:#8a7a68;font-size:10.5px;padding:14px 0 20px;">ആലുമ്പിൽ ദേവസ്ഥാനം കണക്ക് രജിസ്റ്ററിൽ നിന്ന് തയ്യാറാക്കിയത് — ${today}</div>
+
+    <div style="font-size:13px;font-weight:700;color:#7a1f2b;margin-bottom:8px;">1. പണപ്പിരിവ് സംഗ്രഹം</div>
+    <table style="width:100%;font-size:12px;border-collapse:collapse;margin-bottom:18px;background:#fff;border:1px solid #ecdfca;">
+      <tr style="background:#fbf0d9;font-weight:700;color:#5c1620;">
+        <th style="padding:6px 10px;text-align:left;">വിഭാഗം</th>
+        <th style="padding:6px 10px;text-align:center;">എണ്ണം</th>
+        <th style="padding:6px 10px;text-align:right;">ശതമാനം</th>
+      </tr>
+      <tr><td style="padding:6px 10px;border-top:1px solid #ecdfca;">പൂർണമായി അടച്ചവർ</td><td style="padding:6px 10px;text-align:center;border-top:1px solid #ecdfca;">${fullCount}</td><td style="padding:6px 10px;text-align:right;border-top:1px solid #ecdfca;">${pirivuRecords.length > 0 ? Math.round(fullCount / pirivuRecords.length * 100) : 0}%</td></tr>
+      <tr><td style="padding:6px 10px;border-top:1px solid #ecdfca;">ഭാഗികമായി അടച്ചവർ</td><td style="padding:6px 10px;text-align:center;border-top:1px solid #ecdfca;">${partialCount}</td><td style="padding:6px 10px;text-align:right;border-top:1px solid #ecdfca;">${pirivuRecords.length > 0 ? Math.round(partialCount / pirivuRecords.length * 100) : 0}%</td></tr>
+      <tr><td style="padding:6px 10px;border-top:1px solid #ecdfca;">അടയ്ക്കാത്തവർ</td><td style="padding:6px 10px;text-align:center;border-top:1px solid #ecdfca;">${unpaidCount}</td><td style="padding:6px 10px;text-align:right;border-top:1px solid #ecdfca;">${pirivuRecords.length > 0 ? Math.round(unpaidCount / pirivuRecords.length * 100) : 0}%</td></tr>
+      <tr style="font-weight:700;background:#fbf7f0;"><td style="padding:6px 10px;border-top:1px solid #ecdfca;">ആകെ അംഗങ്ങൾ</td><td style="padding:6px 10px;text-align:center;border-top:1px solid #ecdfca;">${pirivuRecords.length}</td><td style="padding:6px 10px;text-align:right;border-top:1px solid #ecdfca;">100%</td></tr>
+    </table>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#1f9d55;margin-bottom:6px;">2. വരവ് — ഇനം തിരിച്ച്</div>
+        <table style="width:100%;font-size:12px;border-collapse:collapse;">
+          ${catRows(incomeByCategory, ledgerIncome)}
+          <tr style="border-top:1.5px solid #ecdfca;font-weight:700;">
+            <td style="padding:8px 0;">ആകെ വരവ്</td>
+            <td style="padding:8px 0;text-align:right;color:#1f9d55;">${fmt(ledgerIncome)}</td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#c0392b;margin-bottom:6px;">3. ചെലവ് — ഇനം തിരിച്ച്</div>
+        <table style="width:100%;font-size:12px;border-collapse:collapse;">
+          ${catRows(expenseByCategory, ledgerExpense)}
+          <tr style="border-top:1.5px solid #ecdfca;font-weight:700;">
+            <td style="padding:8px 0;">ആകെ ചെലവ്</td>
+            <td style="padding:8px 0;text-align:right;color:#c0392b;">${fmt(ledgerExpense)}</td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div style="border-top:1px solid #ecdfca;padding-top:22px;margin-top:22px;display:flex;justify-content:space-between;color:#8a7a68;font-size:11px;">
+      <div>പ്രസിഡന്റ്: ___________________</div>
+      <div>സെക്രട്ടറി: ___________________</div>
+      <div>ട്രഷറർ: ___________________</div>
+    </div>
   </div>`;
 }
 
-export async function makeStatementPDF(pirivuRecords, ledgerRecords) {
-  return renderHTMLToPDF(buildStatementHTML(pirivuRecords, ledgerRecords), 2.5);
+async function renderHTMLToPDF(html, scale = 2) {
+  const holder = document.createElement('div');
+  holder.style.position = 'fixed';
+  holder.style.left = '-9999px';
+  holder.style.top = '0';
+  holder.innerHTML = html;
+  document.body.appendChild(holder);
+  await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
+
+  const canvas = await html2canvas(holder.firstElementChild, { scale, backgroundColor: '#fffdf9', useCORS: true });
+  document.body.removeChild(holder);
+
+  const pxToMm = px => px * 0.264583;
+  const wMm = pxToMm(canvas.width / scale);
+  const hMm = pxToMm(canvas.height / scale);
+  const doc = new jsPDF({ unit: 'mm', format: [wMm, hMm] });
+  doc.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, wMm, hMm);
+  return doc.output('blob');
 }
 
 export async function shareStatement(pirivuRecords, ledgerRecords) {
-  const blob = await makeStatementPDF(pirivuRecords, ledgerRecords);
   const filename = 'Alumbil_Devaswom_Statement_' + new Date().toISOString().slice(0, 10) + '.pdf';
-  const file = new File([blob], filename, { type: 'application/pdf' });
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: 'വരവ്-ചെലവ് സ്റ്റേറ്റ്മെന്റ്' }); return; }
-    catch (e) { if (e.name === 'AbortError') return; }
-  }
-  downloadBlob(blob, filename);
+  const blob = await renderHTMLToPDF(buildStatementHTML(pirivuRecords, ledgerRecords), 2);
+  return shareOrSaveFile({
+    blob,
+    filename,
+    mimeType: 'application/pdf',
+    title: 'ആലുമ്പിൽ ദേവസ്ഥാനം - സാമ്പത്തിക സ്റ്റേറ്റ്മെന്റ്',
+    text: 'ആലുമ്പിൽ ദേവസ്ഥാനം യോഗത്തിനായുള്ള സാമ്പത്തിക സ്റ്റേറ്റ്മെന്റ്'
+  });
 }

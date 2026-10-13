@@ -164,8 +164,8 @@ export default function PirivuSection({ pirivuRecords, setPirivuRecords, ledgerR
         }
       </div>
 
-      <div className="btn-row" style={{ margin: '10px 0' }}>
-        <button id="pirivuExportBtn" className="btn gold" onClick={() => exportPirivu(pirivuRecords)}>⬇ എക്സലിലേക്ക് എക്സ്പോർട്ട് ചെയ്യുക</button>
+      <div className="btn-row" style={{ margin: '14px 0' }}>
+        <button id="pirivuExportBtn" className="btn gold" onClick={() => exportPirivu(pirivuRecords, ledgerRecords)}>📊 എക്സലിലേക്ക് എക്സ്പോർട്ട് ചെയ്യുക (എല്ലാ ടാബുകളും)</button>
       </div>
     </div>
   );

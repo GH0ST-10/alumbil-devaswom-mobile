@@ -27,7 +27,7 @@ function LedgerCard({ r, onEdit, onDelete }) {
   );
 }
 
-export default function LedgerSection({ ledgerRecords, setLedgerRecords }) {
+export default function LedgerSection({ ledgerRecords, setLedgerRecords, pirivuRecords = [] }) {
   const [form, setForm]       = useState(EMPTY_FORM);
   const [editId, setEditId]   = useState(null);
   const [txnType, setTxnType] = useState('income');
@@ -147,8 +147,8 @@ export default function LedgerSection({ ledgerRecords, setLedgerRecords }) {
         }
       </div>
 
-      <div className="btn-row" style={{ margin: '10px 0 30px' }}>
-        <button id="ledgerExportBtn" className="btn gold" onClick={() => exportLedger(ledgerRecords)}>⬇ എക്സലിലേക്ക് എക്സ്പോർട്ട് ചെയ്യുക</button>
+      <div className="btn-row" style={{ margin: '14px 0 30px' }}>
+        <button id="ledgerExportBtn" className="btn gold" onClick={() => exportLedger(ledgerRecords, pirivuRecords)}>📊 എക്സലിലേക്ക് എക്സ്പോർട്ട് ചെയ്യുക (എല്ലാ ടാബുകളും)</button>
       </div>
     </div>
   );
