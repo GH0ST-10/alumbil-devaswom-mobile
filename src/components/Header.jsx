@@ -1,4 +1,5 @@
 import { fmt } from '../utils';
+import { IconFileText, IconSpinner } from './Icons';
 
 export default function Header({ pirivuRecords, ledgerRecords, onStatement, statementLoading }) {
   const pirivuPledged  = pirivuRecords.reduce((s, r) => s + (Number(r.receipt) || 0), 0);
@@ -41,7 +42,17 @@ export default function Header({ pirivuRecords, ledgerRecords, onStatement, stat
             onClick={onStatement}
             disabled={statementLoading}
           >
-            {statementLoading ? '⏳ തയ്യാറാക്കുന്നു...' : '📄 യോഗത്തിന് സ്റ്റേറ്റ്മെന്റ് തയ്യാറാക്കുക'}
+            {statementLoading ? (
+              <>
+                <IconSpinner size={18} />
+                <span>തയ്യാറാക്കുന്നു...</span>
+              </>
+            ) : (
+              <>
+                <IconFileText size={18} />
+                <span>യോഗത്തിന് സ്റ്റേറ്റ്മെന്റ് തയ്യാറാക്കുക</span>
+              </>
+            )}
           </button>
         </div>
       </div>

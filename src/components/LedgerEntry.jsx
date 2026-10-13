@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { genId, saveLS, LS_LEDGER, fmt } from '../utils';
+import { IconPencil, IconPlus, IconCheck, IconTrendingUp, IconTrendingDown, IconHistory, IconArrowRight } from './Icons';
 
 const EMPTY_FORM = {
   date: new Date().toISOString().slice(0, 10),
@@ -79,7 +80,19 @@ export default function LedgerEntry({
     <div className="page-ledger-entry">
       <div className="panel" ref={formRef}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-          <h2>{editingLedger ? '✏️ ഇടപാട് തിരുത്തുക' : '➕ പുതിയ വരവ് / ചെലവ് ചേർക്കുക'}</h2>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {editingLedger ? (
+              <>
+                <IconPencil size={18} />
+                <span>ഇടപാട് തിരുത്തുക</span>
+              </>
+            ) : (
+              <>
+                <IconPlus size={18} />
+                <span>പുതിയ വരവ് / ചെലവ് ചേർക്കുക</span>
+              </>
+            )}
+          </h2>
           {editingLedger && (
             <button type="button" className="btn-text cancel" onClick={handleCancel}>
               റദ്ദാക്കുക
@@ -93,15 +106,19 @@ export default function LedgerEntry({
             type="button"
             className={'typebtn income' + (txnType === 'income' ? ' active' : '')}
             onClick={() => setTxnType('income')}
+            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
           >
-            🟢 വരവ് (Income)
+            <IconTrendingUp size={16} />
+            <span>വരവ് (Income)</span>
           </button>
           <button
             type="button"
             className={'typebtn expense' + (txnType === 'expense' ? ' active' : '')}
             onClick={() => setTxnType('expense')}
+            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
           >
-            🔴 ചെലവ് (Expense)
+            <IconTrendingDown size={16} />
+            <span>ചെലവ് (Expense)</span>
           </button>
         </div>
 
@@ -158,15 +175,26 @@ export default function LedgerEntry({
 
           <div className="btn-row" style={{ marginTop: 10 }}>
             <button type="submit" className="btn" style={{ flex: 1 }}>
-              {editingLedger ? '💾 അപ്ഡേറ്റ് ചെയ്യുക' : '➕ ഇടപാട് ചേർക്കുക'}
+              {editingLedger ? (
+                <>
+                  <IconCheck size={18} />
+                  <span>അപ്ഡേറ്റ് ചെയ്യുക</span>
+                </>
+              ) : (
+                <>
+                  <IconPlus size={18} />
+                  <span>ഇടപാട് ചേർക്കുക</span>
+                </>
+              )}
             </button>
             <button
               type="button"
               className="btn secondary"
               onClick={onGoToHistory}
-              style={{ flex: 1 }}
+              style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
             >
-              📜 ഹിസ്റ്ററി കാണുക ({ledgerRecords.length})
+              <IconHistory size={16} />
+              <span>ഹിസ്റ്ററി കാണുക ({ledgerRecords.length})</span>
             </button>
           </div>
         </form>
@@ -179,8 +207,13 @@ export default function LedgerEntry({
             <div style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--muted)' }}>
               സമീപകാല ഇടപാടുകൾ (RECENT)
             </div>
-            <button className="btn-text" onClick={onGoToHistory}>
-              എല്ലാം കാണുക ➔
+            <button
+              className="btn-text"
+              onClick={onGoToHistory}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+            >
+              <span>എല്ലാം കാണുക</span>
+              <IconArrowRight size={13} />
             </button>
           </div>
 

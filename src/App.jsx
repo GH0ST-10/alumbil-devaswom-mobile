@@ -8,6 +8,8 @@ import LedgerEntry from './components/LedgerEntry';
 import LedgerHistory from './components/LedgerHistory';
 import BottomNav from './components/BottomNav';
 
+import { IconCoins, IconLedger, IconPlus, IconSearch, IconHistory } from './components/Icons';
+
 export default function App() {
   const [activeTab, setActiveTab] = useState('pirivu_entry');
   const [pirivuRecords, setPirivuRecords] = useState(() => loadLS(LS_PIRIVU));
@@ -53,13 +55,15 @@ export default function App() {
             className={'tab' + (activeTab.startsWith('pirivu') ? ' active' : '')}
             onClick={() => setActiveTab(activeTab === 'pirivu_search' ? 'pirivu_search' : 'pirivu_entry')}
           >
-            🪙 പണപ്പിരിവ്
+            <IconCoins size={17} />
+            <span>പണപ്പിരിവ്</span>
           </div>
           <div
             className={'tab' + (activeTab.startsWith('ledger') ? ' active' : '')}
             onClick={() => setActiveTab(activeTab === 'ledger_history' ? 'ledger_history' : 'ledger_entry')}
           >
-            📒 വരവ്-ചെലവ്
+            <IconLedger size={17} />
+            <span>വരവ്-ചെലവ്</span>
           </div>
         </div>
 
@@ -71,13 +75,15 @@ export default function App() {
                 className={'sub-tab' + (activeTab === 'pirivu_entry' ? ' active' : '')}
                 onClick={() => setActiveTab('pirivu_entry')}
               >
-                ➕ ചേർക്കുക (Entry)
+                <IconPlus size={16} />
+                <span>ചേർക്കുക</span>
               </button>
               <button
                 className={'sub-tab' + (activeTab === 'pirivu_search' ? ' active' : '')}
                 onClick={() => setActiveTab('pirivu_search')}
               >
-                🔍 ആളുകളെ തിരയുക ({pirivuRecords.length})
+                <IconSearch size={16} />
+                <span>ആളുകളെ തിരയുക ({pirivuRecords.length})</span>
               </button>
             </>
           ) : (
@@ -86,13 +92,15 @@ export default function App() {
                 className={'sub-tab' + (activeTab === 'ledger_entry' ? ' active' : '')}
                 onClick={() => setActiveTab('ledger_entry')}
               >
-                ➕ ഇടപാട് ചേർക്കുക
+                <IconPlus size={16} />
+                <span>ഇടപാട് ചേർക്കുക</span>
               </button>
               <button
                 className={'sub-tab' + (activeTab === 'ledger_history' ? ' active' : '')}
                 onClick={() => setActiveTab('ledger_history')}
               >
-                📜 ഹിസ്റ്ററി ({ledgerRecords.length})
+                <IconHistory size={16} />
+                <span>ഹിസ്റ്ററി ({ledgerRecords.length})</span>
               </button>
             </>
           )}

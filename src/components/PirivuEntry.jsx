@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { genId, saveLS, LS_PIRIVU, LS_LEDGER, syncPirivuToLedger, statusOf, STATUS_META, fmt } from '../utils';
+import { IconUserPlus, IconPencil, IconPlus, IconCheck, IconSearch, IconArrowRight } from './Icons';
 
 const EMPTY_FORM = {
   name: '',
@@ -97,7 +98,19 @@ export default function PirivuEntry({
       {/* ADD / EDIT FORM */}
       <div className="panel" ref={formRef}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-          <h2>{editingPerson ? '✏️ വിവരങ്ങൾ തിരുത്തുക' : '➕ പുതിയ പിരിവുകാരനെ ചേർക്കുക'}</h2>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {editingPerson ? (
+              <>
+                <IconPencil size={18} />
+                <span>വിവരങ്ങൾ തിരുത്തുക</span>
+              </>
+            ) : (
+              <>
+                <IconUserPlus size={19} />
+                <span>പുതിയ പിരിവുകാരനെ ചേർക്കുക</span>
+              </>
+            )}
+          </h2>
           {editingPerson && (
             <button type="button" className="btn-text cancel" onClick={handleCancel}>
               റദ്ദാക്കുക
@@ -219,7 +232,17 @@ export default function PirivuEntry({
 
           <div className="btn-row" style={{ marginTop: 10 }}>
             <button type="submit" className="btn" style={{ flex: 1 }}>
-              {editingPerson ? '💾 അപ്ഡേറ്റ് ചെയ്യുക' : '➕ പിരിവ് ചേർക്കുക'}
+              {editingPerson ? (
+                <>
+                  <IconCheck size={18} />
+                  <span>അപ്ഡേറ്റ് ചെയ്യുക</span>
+                </>
+              ) : (
+                <>
+                  <IconPlus size={18} />
+                  <span>പിരിവ് ചേർക്കുക</span>
+                </>
+              )}
             </button>
             <button
               type="button"
@@ -227,7 +250,8 @@ export default function PirivuEntry({
               onClick={onGoToSearch}
               style={{ flex: 1 }}
             >
-              🔍 ആളുകളെ തിരയുക ({pirivuRecords.length})
+              <IconSearch size={16} />
+              <span>ആളുകളെ തിരയുക ({pirivuRecords.length})</span>
             </button>
           </div>
         </form>
@@ -240,8 +264,9 @@ export default function PirivuEntry({
             <div style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--muted)' }}>
               സമീപകാല എൻട്രികൾ (RECENT)
             </div>
-            <button className="btn-text" onClick={onGoToSearch}>
-              എല്ലാം കാണുക ➔
+            <button className="btn-text" onClick={onGoToSearch} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <span>എല്ലാം കാണുക</span>
+              <IconArrowRight size={13} />
             </button>
           </div>
 

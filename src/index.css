@@ -352,16 +352,29 @@ input:focus, select:focus {
   top: 0;
   z-index: 20;
   background: var(--bg);
-  padding: 14px 0 10px;
+  padding: 12px 0 8px;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.searchbar svg {
+  position: absolute;
+  left: 14px;
+  pointer-events: none;
+  z-index: 2;
+  color: var(--text3);
 }
 
 .searchbar input {
+  width: 100%;
   margin-bottom: 0;
   border-radius: var(--radius-md);
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding-left: 42px;
 }
 
 .chips {

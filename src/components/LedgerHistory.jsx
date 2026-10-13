@@ -1,6 +1,18 @@
 import { useState } from 'react';
 import { fmt, saveLS, LS_LEDGER, LS_PIRIVU } from '../utils';
 import { exportLedger } from '../excel';
+import {
+  IconSearch,
+  IconTrendingUp,
+  IconTrendingDown,
+  IconFileSpreadsheet,
+  IconFileText,
+  IconSpinner,
+  IconInbox,
+  IconPlus,
+  IconPencil,
+  IconTrash
+} from './Icons';
 
 const INCOME_CATS = ['പണപ്പിരിവ്', 'വഴിപാട്', 'കാണിക്ക', 'വാടക', 'ബാങ്ക് പലിശ', 'മറ്റ് വരവ്'];
 const EXPENSE_CATS = ['പൂജാ സാധനങ്ങൾ', 'ശമ്പളം / ദക്ഷിണ', 'വൈദ്യുതി / വെള്ളം', 'അറ്റകുറ്റപ്പണി', 'ഉത്സവ ചെലവ്', 'മറ്റ് ചെലവ്'];
@@ -49,10 +61,11 @@ export default function LedgerHistory({
     <div className="page-ledger-history">
       {/* SEARCH HEADER */}
       <div className="searchbar">
+        <IconSearch size={18} style={{ color: 'var(--text3)', flexShrink: 0 }} />
         <input
           id="ledgerSearch"
           type="text"
-          placeholder="🔍 വിവരണം, ഇനം, തീയതി തിരയുക..."
+          placeholder="വിവരണം, ഇനം, തീയതി തിരയുക..."
           value={search}
           onChange={e => setSearch(e.target.value)}
           autoComplete="off"
@@ -70,14 +83,18 @@ export default function LedgerHistory({
         <button
           className={'chip' + (typeChip === 'income' ? ' active' : '')}
           onClick={() => setTypeChip('income')}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
         >
-          🟢 വരവ് മാത്രം
+          <IconTrendingUp size={14} style={{ color: 'var(--green)' }} />
+          <span>വരവ് മാത്രം</span>
         </button>
         <button
           className={'chip' + (typeChip === 'expense' ? ' active' : '')}
           onClick={() => setTypeChip('expense')}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
         >
-          🔴 ചെലവ് മാത്രം
+          <IconTrendingDown size={14} style={{ color: 'var(--red)' }} />
+          <span>ചെലവ് മാത്രം</span>
         </button>
       </div>
 
@@ -106,18 +123,29 @@ export default function LedgerHistory({
       <div style={{ display: 'flex', gap: 10, margin: '10px 0 14px', flexWrap: 'wrap' }}>
         <button
           className="btn gold"
-          style={{ flex: 1, minHeight: 44, fontSize: 13 }}
+          style={{ flex: 1, minHeight: 44, fontSize: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
           onClick={() => exportLedger(ledgerRecords, pirivuRecords)}
         >
-          📊 എക്സൽ എക്സ്പോർട്ട് (എല്ലാ ടാബുകളും)
+          <IconFileSpreadsheet size={16} />
+          <span>എക്സൽ എക്സ്പോർട്ട്</span>
         </button>
         <button
           className="btn"
-          style={{ flex: 1, minHeight: 44, fontSize: 13, background: 'var(--maroon)' }}
+          style={{ flex: 1, minHeight: 44, fontSize: 13, background: 'var(--maroon)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
           onClick={onStatement}
           disabled={statementLoading}
         >
-          {statementLoading ? '⏳ തയ്യാറാക്കുന്നു...' : '📄 യോഗ സ്റ്റേറ്റ്മെന്റ്'}
+          {statementLoading ? (
+            <>
+              <IconSpinner size={16} />
+              <span>തയ്യാറാക്കുന്നു...</span>
+            </>
+          ) : (
+            <>
+              <IconFileText size={16} />
+              <span>യോഗ സ്റ്റേറ്റ്മെന്റ്</span>
+            </>
+          )}
         </button>
       </div>
 
@@ -129,10 +157,15 @@ export default function LedgerHistory({
       <div className="cards-list">
         {filtered.length === 0 ? (
           <div className="empty-box">
-            <div style={{ fontSize: 32, marginBottom: 8 }}>📜</div>
+            <IconInbox size={38} style={{ color: 'var(--text3)', margin: '0 auto 8px', display: 'block' }} />
             <div>ഇടപാടുകളൊന്നും കണ്ടെത്തിയില്ല</div>
-            <button className="btn secondary" style={{ marginTop: 14 }} onClick={onGoToLedgerEntry}>
-              ➕ പുതിയ ഇടപാട് ചേർക്കുക
+            <button
+              className="btn secondary"
+              style={{ marginTop: 14, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              onClick={onGoToLedgerEntry}
+            >
+              <IconPlus size={16} />
+              <span>പുതിയ ഇടപാട് ചേർക്കുക</span>
             </button>
           </div>
         ) : (
@@ -152,8 +185,20 @@ export default function LedgerHistory({
               </div>
 
               <div className="card-actions">
-                <button onClick={() => onEditLedger(r)}>✏️ എഡിറ്റ്</button>
-                <button onClick={() => handleDelete(r.id)}>🗑️ ഡിലീറ്റ്</button>
+                <button
+                  onClick={() => onEditLedger(r)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                >
+                  <IconPencil size={13} />
+                  <span>എഡിറ്റ്</span>
+                </button>
+                <button
+                  onClick={() => handleDelete(r.id)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                >
+                  <IconTrash size={13} />
+                  <span>ഡിലീറ്റ്</span>
+                </button>
               </div>
             </div>
           ))
@@ -162,3 +207,4 @@ export default function LedgerHistory({
     </div>
   );
 }
+

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { statusOf, STATUS_META, fmt, syncPirivuToLedger, saveLS, LS_PIRIVU, LS_LEDGER } from '../utils';
 import { shareReceipt } from '../pdf';
 import { exportPirivu } from '../excel';
+import { IconSearch, IconPencil, IconTrash, IconShare, IconSpinner, IconUserPlus, IconFileSpreadsheet } from './Icons';
 
 function distinctOccasions(records) {
   return [...new Set(records.map(r => r.occasion).filter(Boolean))].sort();
@@ -64,10 +65,11 @@ export default function SearchPeople({
     <div className="page-search">
       {/* SEARCH HEADER */}
       <div className="searchbar">
+        <IconSearch size={18} style={{ color: 'var(--text3)', flexShrink: 0 }} />
         <input
           id="pirivuSearch"
           type="text"
-          placeholder="🔍 പേര്, വീട്, രസീത് നമ്പർ, ഫോൺ തിരയുക..."
+          placeholder="പേര്, വീട്, രസീത് നമ്പർ, ഫോൺ തിരയുക..."
           value={search}
           onChange={e => setSearch(e.target.value)}
           autoComplete="off"
@@ -117,8 +119,10 @@ export default function SearchPeople({
           className="btn-text"
           onClick={() => exportPirivu(pirivuRecords, ledgerRecords)}
           title="എക്സൽ ഫയലിൽ ഫോൾഡർ തിരഞ്ഞെടുത്ത് സേവ് ചെയ്യുക"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
         >
-          📊 എക്സൽ എക്സ്പോർട്ട്
+          <IconFileSpreadsheet size={16} />
+          <span>എക്സൽ എക്സ്പോർട്ട്</span>
         </button>
       </div>
 
@@ -126,10 +130,13 @@ export default function SearchPeople({
       <div className="cards-list">
         {filtered.length === 0 ? (
           <div className="empty-box">
-            <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
+            <div style={{ color: 'var(--muted)', marginBottom: 8, display: 'flex', justifyContent: 'center' }}>
+              <IconSearch size={36} />
+            </div>
             <div>ആളുകളെ ആരെയും കണ്ടെത്തിയില്ല</div>
-            <button className="btn secondary" style={{ marginTop: 14 }} onClick={onGoToEntry}>
-              ➕ പുതിയ ആളുകളെ ചേർക്കുക
+            <button className="btn secondary" style={{ marginTop: 14, display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={onGoToEntry}>
+              <IconUserPlus size={16} />
+              <span>പുതിയ ആളുകളെ ചേർക്കുക</span>
             </button>
           </div>
         ) : (
@@ -172,15 +179,32 @@ export default function SearchPeople({
                 {r.remarks && <div className="card-sub" style={{ marginTop: 8 }}>{r.remarks}</div>}
 
                 <div className="card-actions">
-                  <button onClick={() => onEditPerson(r)}>✏️ എഡിറ്റ്</button>
-                  <button onClick={() => handleDelete(r.id)}>🗑️ ഡിലീറ്റ്</button>
+                  <button onClick={() => onEditPerson(r)} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <IconPencil size={13} />
+                    <span>എഡിറ്റ്</span>
+                  </button>
+                  <button onClick={() => handleDelete(r.id)} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <IconTrash size={13} />
+                    <span>ഡിലീറ്റ്</span>
+                  </button>
                   {paid > 0 && (
                     <button
                       className="btn-receipt-share"
                       disabled={sharingId === r.id}
                       onClick={() => handleReceipt(r)}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
                     >
-                      {sharingId === r.id ? '⏳ ഇമേജ് തയ്യാറാക്കുന്നു...' : '🧾 രസീത് ഇമേജ് ഷെയർ ചെയ്യുക'}
+                      {sharingId === r.id ? (
+                        <>
+                          <IconSpinner size={14} />
+                          <span>തയ്യാറാക്കുന്നു...</span>
+                        </>
+                      ) : (
+                        <>
+                          <IconShare size={14} />
+                          <span>രസീത് ഇമേജ് ഷെയർ ചെയ്യുക</span>
+                        </>
+                      )}
                     </button>
                   )}
                 </div>
