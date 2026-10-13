@@ -1,0 +1,352 @@
+/* ============ DESIGN TOKENS ============ */
+:root {
+  --bg: #fbf7f0;
+  --surface: #ffffff;
+  --ink: #2a1d12;
+  --muted: #8a7a68;
+  --line: #ecdfca;
+  --maroon: #7a1f2b;
+  --maroon-ink: #5c1620;
+  --gold: #b8860b;
+  --gold-bg: #fbf0d9;
+  --green: #1f9d55;
+  --green-bg: #e4f6ea;
+  --amber: #c7821a;
+  --amber-bg: #fbedd6;
+  --red: #c0392b;
+  --red-bg: #fbe6e4;
+  --blue: #2a6fdb;
+  --blue-bg: #e4edfc;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Noto Sans Malayalam', 'Inter', sans-serif;
+  padding-bottom: 50px;
+}
+
+/* ============ HEADER ============ */
+.header {
+  background: linear-gradient(135deg, var(--maroon) 0%, #9c2b3a 60%, var(--gold) 140%);
+  color: #fff;
+  padding: 26px 18px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.header::after {
+  content: "";
+  position: absolute;
+  right: -30px;
+  top: -30px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}
+.header h1 {
+  font-weight: 800;
+  font-size: clamp(20px, 5.5vw, 26px);
+  margin: 0 0 4px;
+}
+.header p {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255,255,255,0.85);
+}
+.stats {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.stat {
+  background: rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 10px 14px;
+  min-width: 100px;
+}
+.stat .num {
+  font-weight: 700;
+  font-size: 17px;
+}
+.stat .lbl {
+  font-size: 10.5px;
+  color: rgba(255,255,255,0.8);
+  margin-top: 2px;
+}
+
+/* ============ LAYOUT ============ */
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* ============ TABS ============ */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+.tab {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 13px 8px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(80,30,20,0.06);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.tab.active {
+  background: var(--maroon);
+  color: #fff;
+  border-color: var(--maroon);
+}
+
+/* ============ PANEL / FORM ============ */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+.panel h2 {
+  font-size: 13.5px;
+  color: var(--maroon);
+  margin: 0 0 12px;
+  font-weight: 700;
+}
+label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+input[type=text],
+input[type=number],
+input[type=date],
+select {
+  width: 100%;
+  background: #fffdf9;
+  border: 1.5px solid var(--line);
+  border-radius: 9px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--ink);
+  font-family: inherit;
+  margin-bottom: 10px;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--maroon);
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 12px;
+}
+@media (max-width: 520px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* ============ BUTTONS ============ */
+.btn {
+  background: var(--maroon);
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  font-size: 13.5px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.btn:hover { opacity: 0.9; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn.secondary {
+  background: transparent;
+  border: 1.5px solid var(--line);
+  color: var(--ink);
+}
+.btn.gold { background: var(--gold); }
+.btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+/* ============ TYPE TOGGLE ============ */
+.typetoggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.typebtn {
+  flex: 1;
+  text-align: center;
+  padding: 11px;
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  color: var(--muted);
+  background: #fffdf9;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.typebtn.income.active {
+  background: var(--green-bg);
+  color: var(--green);
+  border-color: var(--green);
+}
+.typebtn.expense.active {
+  background: var(--red-bg);
+  color: var(--red);
+  border-color: var(--red);
+}
+
+/* ============ SEARCH / CHIPS ============ */
+.searchbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg);
+  padding: 12px 0 8px;
+}
+.chips {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+.chip {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s, color 0.12s;
+}
+.chip.active {
+  background: var(--maroon-ink);
+  color: #fff;
+  border-color: var(--maroon-ink);
+}
+.count {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 4px 2px 8px;
+}
+
+/* ============ CARDS ============ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+.card-name {
+  font-weight: 700;
+  font-size: 14.5px;
+}
+.card-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.amounts {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+}
+.amounts div {
+  font-size: 11px;
+  color: var(--muted);
+}
+.amounts b {
+  display: block;
+  font-size: 15px;
+  color: var(--ink);
+  font-weight: 700;
+}
+.progress {
+  height: 6px;
+  background: var(--line);
+  border-radius: 4px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--green);
+  transition: width 0.3s;
+}
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.card-actions button {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: #fffdf9;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+}
+.card-actions button:hover {
+  background: var(--line);
+}
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 40px 20px;
+  font-size: 14px;
+}
+
+/* ============ TRANSACTION AMOUNT ============ */
+.txn-amt {
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+}
+.txn-amt.income { color: var(--green); }
+.txn-amt.expense { color: var(--red); }
