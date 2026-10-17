@@ -1,11 +1,12 @@
-import { IconCoins, IconSearch, IconLedger, IconHistory } from './Icons';
+import { IconCoins, IconSearch, IconLedger, IconHistory, IconChartBar } from './Icons';
 
 export default function BottomNav({ activeTab, onChangeTab, searchCount = 0, historyCount = 0 }) {
   const tabs = [
     { id: 'pirivu_entry', label: 'പിരിവ്', Icon: IconCoins },
     { id: 'pirivu_search', label: 'തിരയുക', Icon: IconSearch, badge: searchCount > 0 ? searchCount : null },
     { id: 'ledger_entry', label: 'വരവ്-ചെലവ്', Icon: IconLedger },
-    { id: 'ledger_history', label: 'ഹിസ്റ്ററി', Icon: IconHistory }
+    { id: 'ledger_history', label: 'ഹിസ്റ്ററി', Icon: IconHistory },
+    { id: 'reports', label: 'റിപ്പോർട്ട്', Icon: IconChartBar }
   ];
 
   return (

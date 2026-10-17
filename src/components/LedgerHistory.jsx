@@ -11,7 +11,8 @@ import {
   IconInbox,
   IconPlus,
   IconPencil,
-  IconTrash
+  IconTrash,
+  IconChartBar
 } from './Icons';
 
 const INCOME_CATS = ['പണപ്പിരിവ്', 'വഴിപാട്', 'കാണിക്ക', 'വാടക', 'ബാങ്ക് പലിശ', 'മറ്റ് വരവ്'];
@@ -25,7 +26,8 @@ export default function LedgerHistory({
   onEditLedger,
   onGoToLedgerEntry,
   onStatement,
-  statementLoading
+  statementLoading,
+  onGoToReports
 }) {
   const [search, setSearch] = useState('');
   const [typeChip, setTypeChip] = useState('all');
@@ -120,14 +122,25 @@ export default function LedgerHistory({
       )}
 
       {/* ACTIONS ROW */}
-      <div style={{ display: 'flex', gap: 10, margin: '10px 0 14px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 8, margin: '10px 0 14px', flexWrap: 'wrap' }}>
+        {onGoToReports && (
+          <button
+            type="button"
+            className="btn"
+            style={{ flex: 1, minHeight: 44, fontSize: 13, background: 'var(--maroon-light)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+            onClick={onGoToReports}
+          >
+            <IconChartBar size={16} />
+            <span>വിശദമായ റിപ്പോർട്ട്</span>
+          </button>
+        )}
         <button
           className="btn gold"
           style={{ flex: 1, minHeight: 44, fontSize: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
           onClick={() => exportLedger(ledgerRecords, pirivuRecords)}
         >
           <IconFileSpreadsheet size={16} />
-          <span>എക്സൽ എക്സ്പോർട്ട്</span>
+          <span>എക്സൽ</span>
         </button>
         <button
           className="btn"

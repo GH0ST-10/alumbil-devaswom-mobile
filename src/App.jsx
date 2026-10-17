@@ -6,9 +6,10 @@ import PirivuEntry from './components/PirivuEntry';
 import SearchPeople from './components/SearchPeople';
 import LedgerEntry from './components/LedgerEntry';
 import LedgerHistory from './components/LedgerHistory';
+import FinancialReports from './components/FinancialReports';
 import BottomNav from './components/BottomNav';
 
-import { IconCoins, IconLedger, IconPlus, IconSearch, IconHistory } from './components/Icons';
+import { IconCoins, IconLedger, IconPlus, IconSearch, IconHistory, IconChartBar } from './components/Icons';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('pirivu_entry');
@@ -46,6 +47,7 @@ export default function App() {
         ledgerRecords={ledgerRecords}
         onStatement={handleStatement}
         statementLoading={statementLoading}
+        onGoToReports={() => setActiveTab('reports')}
       />
 
       <main className="wrap content-area">
@@ -65,46 +67,55 @@ export default function App() {
             <IconLedger size={17} />
             <span>വരവ്-ചെലവ്</span>
           </div>
+          <div
+            className={'tab' + (activeTab === 'reports' ? ' active' : '')}
+            onClick={() => setActiveTab('reports')}
+          >
+            <IconChartBar size={17} />
+            <span>കണക്ക് റിപ്പോർട്ട്</span>
+          </div>
         </div>
 
         {/* SUB-TABS (Entry vs Search/History) */}
-        <div className="sub-tabs">
-          {activeTab.startsWith('pirivu') ? (
-            <>
-              <button
-                className={'sub-tab' + (activeTab === 'pirivu_entry' ? ' active' : '')}
-                onClick={() => setActiveTab('pirivu_entry')}
-              >
-                <IconPlus size={16} />
-                <span>ചേർക്കുക</span>
-              </button>
-              <button
-                className={'sub-tab' + (activeTab === 'pirivu_search' ? ' active' : '')}
-                onClick={() => setActiveTab('pirivu_search')}
-              >
-                <IconSearch size={16} />
-                <span>ആളുകളെ തിരയുക ({pirivuRecords.length})</span>
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                className={'sub-tab' + (activeTab === 'ledger_entry' ? ' active' : '')}
-                onClick={() => setActiveTab('ledger_entry')}
-              >
-                <IconPlus size={16} />
-                <span>ഇടപാട് ചേർക്കുക</span>
-              </button>
-              <button
-                className={'sub-tab' + (activeTab === 'ledger_history' ? ' active' : '')}
-                onClick={() => setActiveTab('ledger_history')}
-              >
-                <IconHistory size={16} />
-                <span>ഹിസ്റ്ററി ({ledgerRecords.length})</span>
-              </button>
-            </>
-          )}
-        </div>
+        {!activeTab.startsWith('reports') && (
+          <div className="sub-tabs">
+            {activeTab.startsWith('pirivu') ? (
+              <>
+                <button
+                  className={'sub-tab' + (activeTab === 'pirivu_entry' ? ' active' : '')}
+                  onClick={() => setActiveTab('pirivu_entry')}
+                >
+                  <IconPlus size={16} />
+                  <span>ചേർക്കുക</span>
+                </button>
+                <button
+                  className={'sub-tab' + (activeTab === 'pirivu_search' ? ' active' : '')}
+                  onClick={() => setActiveTab('pirivu_search')}
+                >
+                  <IconSearch size={16} />
+                  <span>ആളുകളെ തിരയുക ({pirivuRecords.length})</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className={'sub-tab' + (activeTab === 'ledger_entry' ? ' active' : '')}
+                  onClick={() => setActiveTab('ledger_entry')}
+                >
+                  <IconPlus size={16} />
+                  <span>ഇടപാട് ചേർക്കുക</span>
+                </button>
+                <button
+                  className={'sub-tab' + (activeTab === 'ledger_history' ? ' active' : '')}
+                  onClick={() => setActiveTab('ledger_history')}
+                >
+                  <IconHistory size={16} />
+                  <span>ഹിസ്റ്ററി ({ledgerRecords.length})</span>
+                </button>
+              </>
+            )}
+          </div>
+        )}
 
         {/* PAGES */}
         {activeTab === 'pirivu_entry' && (
@@ -154,6 +165,16 @@ export default function App() {
               setEditingLedger(null);
               setActiveTab('ledger_entry');
             }}
+            onStatement={handleStatement}
+            statementLoading={statementLoading}
+            onGoToReports={() => setActiveTab('reports')}
+          />
+        )}
+
+        {activeTab === 'reports' && (
+          <FinancialReports
+            pirivuRecords={pirivuRecords}
+            ledgerRecords={ledgerRecords}
             onStatement={handleStatement}
             statementLoading={statementLoading}
           />

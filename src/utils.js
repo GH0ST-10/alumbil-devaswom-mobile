@@ -72,3 +72,57 @@ export function downloadBlob(blob, filename) {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 5000);
 }
+
+/* ============ MALAYALAM DATES & MONTHS ============ */
+export const ML_MONTHS = [
+  'ജനുവരി', 'ഫെബ്രുവരി', 'മാർച്ച്', 'ഏപ്രിൽ', 'മെയ്', 'ജൂൺ',
+  'ജൂലൈ', 'ഓഗസ്റ്റ്', 'സെപ്റ്റംബർ', 'ഒക്ടോബർ', 'നവംബർ', 'ഡിസംബർ'
+];
+
+export function formatMLMonth(ymStr) {
+  if (!ymStr) return '';
+  const parts = ymStr.split('-');
+  if (parts.length < 2) return ymStr;
+  const y = parts[0];
+  const m = parseInt(parts[1], 10);
+  const name = ML_MONTHS[m - 1] || parts[1];
+  return `${name} ${y}`;
+}
+
+export function formatDisplayDate(dateStr) {
+  if (!dateStr) return '—';
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  return dateStr;
+}
+
+export function getDistinctMonths(pirivu = [], ledger = []) {
+  const set = new Set();
+  pirivu.forEach(r => {
+    if (r.date && r.date.length >= 7) set.add(r.date.slice(0, 7));
+  });
+  ledger.forEach(r => {
+    if (r.date && r.date.length >= 7) set.add(r.date.slice(0, 7));
+  });
+  if (set.size === 0) {
+    set.add(new Date().toISOString().slice(0, 7));
+  }
+  return Array.from(set).sort().reverse();
+}
+
+export function getDistinctYears(pirivu = [], ledger = []) {
+  const set = new Set();
+  pirivu.forEach(r => {
+    if (r.date && r.date.length >= 4) set.add(r.date.slice(0, 4));
+  });
+  ledger.forEach(r => {
+    if (r.date && r.date.length >= 4) set.add(r.date.slice(0, 4));
+  });
+  if (set.size === 0) {
+    set.add(String(new Date().getFullYear()));
+  }
+  return Array.from(set).sort().reverse();
+}
+

@@ -232,3 +232,191 @@ export async function shareStatement(pirivuRecords, ledgerRecords) {
     text: 'ആലുമ്പിൽ ദേവസ്ഥാനം യോഗത്തിനായുള്ള സാമ്പത്തിക സ്റ്റേറ്റ്മെന്റ്'
   });
 }
+
+/* ====== DETAILED FINANCIAL REPORT (MONTH / YEAR / DATE-WISE) ====== */
+function buildDetailedReportHTML({
+  periodTitle = 'വരവ് ചെലവ് കണക്ക് റിപ്പോർട്ട്',
+  incomeList = [],
+  expenseList = [],
+  totalIncome = 0,
+  totalExpense = 0,
+  netBalance = 0,
+  catExpenseSummary = []
+}) {
+  const esc = s => String(s || '').replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+  const today = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+
+  const incomeRows = incomeList.map((r, i) => `
+    <tr style="border-bottom:1px solid #f0e6d6;background:${i % 2 === 0 ? '#fff' : '#fcfaf6'};">
+      <td style="padding:6px 8px;color:#8a7a68;font-size:11px;">${i + 1}</td>
+      <td style="padding:6px 8px;font-weight:700;color:#2a1d12;">${esc(r.name || r.desc || '—')}</td>
+      <td style="padding:6px 8px;color:#6b5d52;font-size:11.5px;">${esc(r.house || '—')}</td>
+      <td style="padding:6px 8px;color:#8a7a68;font-size:11px;">${esc(r.receiptno || '—')}</td>
+      <td style="padding:6px 8px;color:#8a7a68;font-size:11px;white-space:nowrap;">${esc(r.date || '—')}</td>
+      <td style="padding:6px 8px;color:#7a1f2b;font-size:11.5px;">${esc(r.occasion || r.category || 'പണപ്പിരിവ്')}</td>
+      <td style="padding:6px 8px;text-align:right;font-weight:700;color:#1f9d55;white-space:nowrap;">${fmt(r.amount || r.paid || 0)}</td>
+    </tr>
+  `).join('');
+
+  const expenseRows = expenseList.map((r, i) => `
+    <tr style="border-bottom:1px solid #f0e6d6;background:${i % 2 === 0 ? '#fff' : '#fcfaf6'};">
+      <td style="padding:6px 8px;color:#8a7a68;font-size:11px;">${i + 1}</td>
+      <td style="padding:6px 8px;color:#8a7a68;font-size:11px;white-space:nowrap;">${esc(r.date || '—')}</td>
+      <td style="padding:6px 8px;font-weight:600;color:#7a1f2b;font-size:11.5px;">${esc(r.category || 'മറ്റുള്ളവ')}</td>
+      <td style="padding:6px 8px;color:#2a1d12;font-weight:600;">${esc(r.desc || '—')}</td>
+      <td style="padding:6px 8px;text-align:right;font-weight:700;color:#c0392b;white-space:nowrap;">${fmt(r.amount || 0)}</td>
+    </tr>
+  `).join('');
+
+  const catRows = catExpenseSummary.map(c => `
+    <tr>
+      <td style="padding:5px 8px;color:#2a1d12;">${esc(c.category)}</td>
+      <td style="padding:5px 8px;text-align:right;font-weight:700;color:#c0392b;">${fmt(c.amount)}</td>
+      <td style="padding:5px 8px;text-align:right;color:#8a7a68;font-size:11px;width:55px;">${c.pct}%</td>
+    </tr>
+  `).join('');
+
+  return `
+  <div style="width:760px;background:#fffdf9;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans Malayalam','Inter',sans-serif;color:#2a1d12;padding:34px 40px;">
+    <!-- HEADER -->
+    <div style="text-align:center;border-bottom:2.5px solid #7a1f2b;padding-bottom:16px;margin-bottom:22px;">
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;">
+        <img src="/icon.png" style="width:44px;height:44px;border-radius:10px;object-fit:cover;" />
+        <div style="font-size:24px;font-weight:800;color:#7a1f2b;letter-spacing:-0.2px;">ആലുമ്പിൽ ദേവസ്ഥാനം</div>
+      </div>
+      <div style="font-size:16px;font-weight:700;color:#5c1620;margin-top:2px;">${esc(periodTitle)}</div>
+      <div style="font-size:12px;color:#8a7a68;margin-top:4px;">തീയതി: ${today}</div>
+    </div>
+
+    <!-- SUMMARY KPI TILES -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;">
+      <div style="background:#ffffff;border:1.5px solid #d4edd9;border-radius:12px;padding:12px 14px;">
+        <div style="font-size:11.5px;color:#15803d;font-weight:700;">ആകെ വരവ് (INCOME)</div>
+        <div style="font-size:20px;font-weight:800;color:#15803d;margin-top:3px;">${fmt(totalIncome)}</div>
+        <div style="font-size:11px;color:#8a7a68;margin-top:3px;">പൈസ തന്നവർ: ${incomeList.length}</div>
+      </div>
+      <div style="background:#ffffff;border:1.5px solid #fad2d2;border-radius:12px;padding:12px 14px;">
+        <div style="font-size:11.5px;color:#b91c1c;font-weight:700;">ആകെ ചെലവ് (EXPENSE)</div>
+        <div style="font-size:20px;font-weight:800;color:#b91c1c;margin-top:3px;">${fmt(totalExpense)}</div>
+        <div style="font-size:11px;color:#8a7a68;margin-top:3px;">ഇടപാടുകൾ: ${expenseList.length}</div>
+      </div>
+      <div style="background:#ffffff;border:1.5px solid #ecdfca;border-radius:12px;padding:12px 14px;">
+        <div style="font-size:11.5px;color:#b8860b;font-weight:700;">കൈവശമുള്ള ബാക്കി (BALANCE)</div>
+        <div style="font-size:20px;font-weight:800;color:${netBalance >= 0 ? '#15803d' : '#b91c1c'};margin-top:3px;">${fmt(netBalance)}</div>
+        <div style="font-size:11px;color:#8a7a68;margin-top:3px;">${netBalance >= 0 ? 'നീക്കിയിരിപ്പ് മിച്ചം' : 'കമ്മി'}</div>
+      </div>
+    </div>
+
+    <!-- SECTION 1: INCOME / WHO GAVE MONEY -->
+    <div style="margin-bottom:26px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="font-size:14px;font-weight:800;color:#15803d;display:flex;align-items:center;gap:6px;">
+          <span>1. വരവ് — ആരൊക്കെ പൈസ തന്നു (${incomeList.length})</span>
+        </div>
+        <div style="font-size:13px;font-weight:800;color:#15803d;">ആകെ: ${fmt(totalIncome)}</div>
+      </div>
+
+      ${incomeList.length === 0 ? `
+        <div style="padding:16px;text-align:center;background:#fff;border:1px dashed #ecdfca;border-radius:10px;color:#8a7a68;font-size:12px;">
+          ഈ കാലയളവിൽ വരവുകളൊന്നും രേഖപ്പെടുത്തിയിട്ടില്ല
+        </div>
+      ` : `
+        <table style="width:100%;font-size:12px;border-collapse:collapse;background:#fff;border:1px solid #ecdfca;border-radius:8px;overflow:hidden;">
+          <thead>
+            <tr style="background:#f5f0e6;font-weight:700;color:#5c1620;text-align:left;">
+              <th style="padding:7px 8px;width:30px;">#</th>
+              <th style="padding:7px 8px;">പേര്</th>
+              <th style="padding:7px 8px;">വീട് / വിലാസം</th>
+              <th style="padding:7px 8px;">രസീത് #</th>
+              <th style="padding:7px 8px;">തീയതി</th>
+              <th style="padding:7px 8px;">ഉത്സവം / വക</th>
+              <th style="padding:7px 8px;text-align:right;">തുക (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${incomeRows}
+          </tbody>
+          <tfoot>
+            <tr style="background:#fbf7f0;font-weight:800;border-top:1.5px solid #ecdfca;">
+              <td colspan="6" style="padding:8px;text-align:right;">ആകെ ലഭിച്ച വരവ്:</td>
+              <td style="padding:8px;text-align:right;color:#15803d;">${fmt(totalIncome)}</td>
+            </tr>
+          </tfoot>
+        </table>
+      `}
+    </div>
+
+    <!-- SECTION 2: EXPENSES / WHAT WAS SPENT ON -->
+    <div style="margin-bottom:26px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="font-size:14px;font-weight:800;color:#b91c1c;display:flex;align-items:center;gap:6px;">
+          <span>2. ചെലവ് — എന്തിനൊക്കെ ചെലവാക്കി (${expenseList.length})</span>
+        </div>
+        <div style="font-size:13px;font-weight:800;color:#b91c1c;">ആകെ: ${fmt(totalExpense)}</div>
+      </div>
+
+      ${expenseList.length === 0 ? `
+        <div style="padding:16px;text-align:center;background:#fff;border:1px dashed #ecdfca;border-radius:10px;color:#8a7a68;font-size:12px;">
+          ഈ കാലയളവിൽ ചെലവുകളൊന്നും രേഖപ്പെടുത്തിയിട്ടില്ല
+        </div>
+      ` : `
+        <table style="width:100%;font-size:12px;border-collapse:collapse;background:#fff;border:1px solid #ecdfca;border-radius:8px;overflow:hidden;">
+          <thead>
+            <tr style="background:#fbf0d9;font-weight:700;color:#5c1620;text-align:left;">
+              <th style="padding:7px 8px;width:30px;">#</th>
+              <th style="padding:7px 8px;">തീയതി</th>
+              <th style="padding:7px 8px;">ഇനം (Category)</th>
+              <th style="padding:7px 8px;">വിവരണം</th>
+              <th style="padding:7px 8px;text-align:right;">തുക (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${expenseRows}
+          </tbody>
+          <tfoot>
+            <tr style="background:#fbf7f0;font-weight:800;border-top:1.5px solid #ecdfca;">
+              <td colspan="4" style="padding:8px;text-align:right;">ആകെ ചെലവ്:</td>
+              <td style="padding:8px;text-align:right;color:#b91c1c;">${fmt(totalExpense)}</td>
+            </tr>
+          </tfoot>
+        </table>
+      `}
+    </div>
+
+    <!-- SECTION 3: CATEGORY SUMMARY (If expenses exist) -->
+    ${catExpenseSummary.length > 0 ? `
+      <div style="margin-bottom:26px;">
+        <div style="font-size:13.5px;font-weight:800;color:#5c1620;margin-bottom:8px;">3. ചെലവ് — ഇനം തിരിച്ച് സംഗ്രഹം</div>
+        <table style="width:100%;font-size:12px;border-collapse:collapse;background:#fff;border:1px solid #ecdfca;">
+          <tr style="background:#fbf0d9;font-weight:700;color:#5c1620;">
+            <th style="padding:6px 10px;text-align:left;">ഇനം</th>
+            <th style="padding:6px 10px;text-align:right;">തുക</th>
+            <th style="padding:6px 10px;text-align:right;">ശതമാനം</th>
+          </tr>
+          ${catRows}
+        </table>
+      </div>
+    ` : ''}
+
+    <!-- SIGNATURES -->
+    <div style="border-top:1.5px solid #ecdfca;padding-top:28px;margin-top:28px;display:flex;justify-content:space-between;color:#6b5d52;font-size:11.5px;font-weight:600;">
+      <div>പ്രസിഡന്റ്: ___________________</div>
+      <div>സെക്രട്ടറി: ___________________</div>
+      <div>ട്രഷറർ: ___________________</div>
+    </div>
+  </div>`;
+}
+
+export async function shareDetailedReport(params) {
+  const cleanTitle = (params.periodTitle || 'Report').replace(/[^\w\d\u0D00-\u0D7F]/g, '_').slice(0, 30);
+  const filename = `Alumbil_Devaswom_Report_${cleanTitle}_${new Date().toISOString().slice(0, 10)}.pdf`;
+  const blob = await renderHTMLToPDF(buildDetailedReportHTML(params), 2);
+  return shareOrSaveFile({
+    blob,
+    filename,
+    mimeType: 'application/pdf',
+    title: `ആലുമ്പിൽ ദേവസ്ഥാനം - ${params.periodTitle || 'റിപ്പോർട്ട്'}`,
+    text: `ആലുമ്പിൽ ദേവസ്ഥാനം ${params.periodTitle || 'വരവ് ചെലവ് റിപ്പോർട്ട്'} ഇതോടൊപ്പം അയക്കുന്നു.`
+  });
+}
+

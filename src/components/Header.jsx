@@ -1,7 +1,13 @@
 import { fmt } from '../utils';
-import { IconFileText, IconSpinner } from './Icons';
+import { IconFileText, IconSpinner, IconChartBar } from './Icons';
 
-export default function Header({ pirivuRecords, ledgerRecords, onStatement, statementLoading }) {
+export default function Header({
+  pirivuRecords,
+  ledgerRecords,
+  onStatement,
+  statementLoading,
+  onGoToReports
+}) {
   const pirivuPledged  = pirivuRecords.reduce((s, r) => s + (Number(r.receipt) || 0), 0);
   const ledgerIncome   = ledgerRecords.filter(r => r.type === 'income').reduce((s, r) => s + (Number(r.amount) || 0), 0);
   const ledgerExpense  = ledgerRecords.filter(r => r.type === 'expense').reduce((s, r) => s + (Number(r.amount) || 0), 0);
@@ -36,21 +42,44 @@ export default function Header({ pirivuRecords, ledgerRecords, onStatement, stat
           </div>
         </div>
         <div className="btn-row" style={{ marginTop: 14 }}>
+          {onGoToReports && (
+            <button
+              type="button"
+              className="btn"
+              style={{
+                flex: 1,
+                minHeight: 44,
+                fontSize: 13,
+                background: 'rgba(255, 255, 255, 0.18)',
+                border: '1.5px solid rgba(255, 255, 255, 0.35)',
+                color: '#fff',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6
+              }}
+              onClick={onGoToReports}
+            >
+              <IconChartBar size={17} />
+              <span>വിശദമായ റിപ്പോർട്ട്</span>
+            </button>
+          )}
           <button
             id="statementBtn"
             className="btn gold"
+            style={{ flex: 1, minHeight: 44, fontSize: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
             onClick={onStatement}
             disabled={statementLoading}
           >
             {statementLoading ? (
               <>
-                <IconSpinner size={18} />
+                <IconSpinner size={16} />
                 <span>തയ്യാറാക്കുന്നു...</span>
               </>
             ) : (
               <>
-                <IconFileText size={18} />
-                <span>യോഗത്തിന് സ്റ്റേറ്റ്മെന്റ് തയ്യാറാക്കുക</span>
+                <IconFileText size={17} />
+                <span>യോഗ സ്റ്റേറ്റ്മെന്റ്</span>
               </>
             )}
           </button>
@@ -59,3 +88,4 @@ export default function Header({ pirivuRecords, ledgerRecords, onStatement, stat
     </header>
   );
 }
+
