@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { statusOf, STATUS_META, fmt, syncPirivuToLedger, saveLS, LS_PIRIVU, LS_LEDGER } from '../utils';
+import { deletePirivuRecord } from '../services/db';
 import { shareReceipt } from '../pdf';
 import { exportPirivu } from '../excel';
 import { IconSearch, IconPencil, IconTrash, IconShare, IconSpinner, IconUserPlus, IconFileSpreadsheet } from './Icons';
@@ -14,7 +15,9 @@ export default function SearchPeople({
   ledgerRecords,
   setLedgerRecords,
   onEditPerson,
-  onGoToEntry
+  onGoToEntry,
+  isAdmin,
+  onRequestUnlock
 }) {
   const [search, setSearch] = useState('');
   const [statusChip, setStatusChip] = useState('all');
@@ -23,14 +26,32 @@ export default function SearchPeople({
 
   const occasions = distinctOccasions(pirivuRecords);
 
+  const handleEdit = r => {
+    if (!isAdmin && onRequestUnlock) {
+      return onRequestUnlock(() => onEditPerson(r));
+    }
+    onEditPerson(r);
+  };
+
   const handleDelete = id => {
-    if (!confirm('ഈ എൻട്രി ഡിലീറ്റ് ചെയ്യണോ?')) return;
-    const newPirivu = pirivuRecords.filter(r => r.id !== id);
-    saveLS(LS_PIRIVU, newPirivu);
-    setPirivuRecords(newPirivu);
-    const newLedger = ledgerRecords.filter(r => r.id !== 'pirivu_' + id);
-    saveLS(LS_LEDGER, newLedger);
-    setLedgerRecords(newLedger);
+    const proceed = () => {
+      if (!confirm('ഈ എൻട്രി ഡിലീറ്റ് ചെയ്യണോ?')) return;
+      const newPirivu = pirivuRecords.filter(r => r.id !== id);
+      saveLS(LS_PIRIVU, newPirivu);
+      setPirivuRecords(newPirivu);
+      const newLedger = ledgerRecords.filter(r => r.id !== 'pirivu_' + id);
+      saveLS(LS_LEDGER, newLedger);
+      setLedgerRecords(newLedger);
+
+      deletePirivuRecord(id).catch(err => {
+        console.warn('Cloud delete notice:', err);
+      });
+    };
+
+    if (!isAdmin && onRequestUnlock) {
+      return onRequestUnlock(proceed);
+    }
+    proceed();
   };
 
   const handleReceipt = async r => {
@@ -179,7 +200,7 @@ export default function SearchPeople({
                 {r.remarks && <div className="card-sub" style={{ marginTop: 8 }}>{r.remarks}</div>}
 
                 <div className="card-actions">
-                  <button onClick={() => onEditPerson(r)} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                  <button onClick={() => handleEdit(r)} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
                     <IconPencil size={13} />
                     <span>എഡിറ്റ്</span>
                   </button>

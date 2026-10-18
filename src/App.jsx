@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { loadLS, LS_PIRIVU, LS_LEDGER } from './utils';
+import { useState, useEffect } from 'react';
+import { loadLS, saveLS, LS_PIRIVU, LS_LEDGER } from './utils';
 import { shareStatement } from './pdf';
+import { subscribeToPirivu, subscribeToLedger, migrateLocalToCloud } from './services/db';
 import Header from './components/Header';
 import PirivuEntry from './components/PirivuEntry';
 import SearchPeople from './components/SearchPeople';
@@ -8,6 +9,7 @@ import LedgerEntry from './components/LedgerEntry';
 import LedgerHistory from './components/LedgerHistory';
 import FinancialReports from './components/FinancialReports';
 import BottomNav from './components/BottomNav';
+import PinModal, { LS_ADMIN_AUTH } from './components/PinModal';
 
 import { IconCoins, IconLedger, IconPlus, IconSearch, IconHistory, IconChartBar } from './components/Icons';
 
@@ -18,6 +20,86 @@ export default function App() {
   const [editingPerson, setEditingPerson] = useState(null);
   const [editingLedger, setEditingLedger] = useState(null);
   const [statementLoading, setStatementLoading] = useState(false);
+
+  // Cloud & Security state
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem(LS_ADMIN_AUTH) === 'true');
+  const [pinModalOpen, setPinModalOpen] = useState(false);
+  const [pendingUnlockAction, setPendingUnlockAction] = useState(null);
+  const [migrating, setMigrating] = useState(false);
+
+  // Network listener (Online / Offline status)
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  // Real-time Cloud Synchronization (Works offline via Firestore cache)
+  useEffect(() => {
+    const unsubPirivu = subscribeToPirivu(cloudList => {
+      if (cloudList && cloudList.length > 0) {
+        setPirivuRecords(cloudList);
+        saveLS(LS_PIRIVU, cloudList);
+      }
+    });
+
+    const unsubLedger = subscribeToLedger(cloudList => {
+      if (cloudList && cloudList.length > 0) {
+        setLedgerRecords(cloudList);
+        saveLS(LS_LEDGER, cloudList);
+      }
+    });
+
+    return () => {
+      unsubPirivu();
+      unsubLedger();
+    };
+  }, []);
+
+  const handleToggleAdmin = () => {
+    if (isAdmin) {
+      setIsAdmin(false);
+      localStorage.removeItem(LS_ADMIN_AUTH);
+    } else {
+      setPinModalOpen(true);
+    }
+  };
+
+  const handleRequestUnlock = actionCallback => {
+    if (isAdmin) {
+      actionCallback();
+    } else {
+      setPendingUnlockAction(() => actionCallback);
+      setPinModalOpen(true);
+    }
+  };
+
+  const handleUnlockSuccess = () => {
+    setIsAdmin(true);
+    if (pendingUnlockAction) {
+      pendingUnlockAction();
+      setPendingUnlockAction(null);
+    }
+  };
+
+  const handleMigrate = async () => {
+    if (migrating) return;
+    setMigrating(true);
+    try {
+      const count = await migrateLocalToCloud(pirivuRecords, ledgerRecords);
+      alert(`വിവരങ്ങൾ (${count} എണ്ണം) ക്ലൗഡിലേക്ക് വിജയകരമായി സിങ്ക് ചെയ്തു!`);
+    } catch {
+      alert('ക്ലൗഡ് സിങ്ക് ചെയ്യുമ്പോൾ തടസ്സം നേരിട്ടു. ഇന്റർനെറ്റ് ഉണ്ടെന്ന് ഉറപ്പാക്കുക.');
+    } finally {
+      setMigrating(false);
+    }
+  };
 
   const handleStatement = async () => {
     setStatementLoading(true);
@@ -48,6 +130,11 @@ export default function App() {
         onStatement={handleStatement}
         statementLoading={statementLoading}
         onGoToReports={() => setActiveTab('reports')}
+        isAdmin={isAdmin}
+        isOnline={isOnline}
+        onToggleAdmin={handleToggleAdmin}
+        onMigrate={handleMigrate}
+        canMigrate={pirivuRecords.length > 0 && !migrating}
       />
 
       <main className="wrap content-area">
@@ -127,6 +214,8 @@ export default function App() {
             editingPerson={editingPerson}
             onClearEditing={() => setEditingPerson(null)}
             onGoToSearch={() => setActiveTab('pirivu_search')}
+            isAdmin={isAdmin}
+            onRequestUnlock={handleRequestUnlock}
           />
         )}
 
@@ -141,6 +230,8 @@ export default function App() {
               setEditingPerson(null);
               setActiveTab('pirivu_entry');
             }}
+            isAdmin={isAdmin}
+            onRequestUnlock={handleRequestUnlock}
           />
         )}
 
@@ -151,6 +242,8 @@ export default function App() {
             editingLedger={editingLedger}
             onClearEditing={() => setEditingLedger(null)}
             onGoToHistory={() => setActiveTab('ledger_history')}
+            isAdmin={isAdmin}
+            onRequestUnlock={handleRequestUnlock}
           />
         )}
 
@@ -168,6 +261,8 @@ export default function App() {
             onStatement={handleStatement}
             statementLoading={statementLoading}
             onGoToReports={() => setActiveTab('reports')}
+            isAdmin={isAdmin}
+            onRequestUnlock={handleRequestUnlock}
           />
         )}
 
@@ -191,6 +286,16 @@ export default function App() {
         }}
         searchCount={pirivuRecords.length}
         historyCount={ledgerRecords.length}
+      />
+
+      {/* 4-DIGIT TEMPLE PIN DIALOG */}
+      <PinModal
+        isOpen={pinModalOpen}
+        onClose={() => {
+          setPinModalOpen(false);
+          setPendingUnlockAction(null);
+        }}
+        onSuccess={handleUnlockSuccess}
       />
     </div>
   );

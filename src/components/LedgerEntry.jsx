@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { genId, saveLS, LS_LEDGER, fmt } from '../utils';
+import { saveLedgerRecord } from '../services/db';
 import { IconPencil, IconPlus, IconCheck, IconTrendingUp, IconTrendingDown, IconHistory, IconArrowRight } from './Icons';
 
 const EMPTY_FORM = {
@@ -17,7 +18,9 @@ export default function LedgerEntry({
   setLedgerRecords,
   editingLedger,
   onClearEditing,
-  onGoToHistory
+  onGoToHistory,
+  isAdmin,
+  onRequestUnlock
 }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [txnType, setTxnType] = useState('income');
@@ -44,28 +47,40 @@ export default function LedgerEntry({
     const amt = Number(form.amount);
     if (!amt || amt <= 0) return alert('ശരിയായ തുക നൽകുക');
 
-    const id = editingLedger ? editingLedger.id : genId();
-    const rec = {
-      id,
-      date: form.date,
-      type: txnType,
-      category: form.category.trim(),
-      desc: form.desc.trim(),
-      amount: amt
+    const proceed = () => {
+      const id = editingLedger ? editingLedger.id : genId();
+      const rec = {
+        id,
+        date: form.date,
+        type: txnType,
+        category: form.category.trim(),
+        desc: form.desc.trim(),
+        amount: amt
+      };
+
+      let newLedger;
+      if (editingLedger) {
+        newLedger = ledgerRecords.map(r => (r.id === id ? rec : r));
+      } else {
+        newLedger = [rec, ...ledgerRecords];
+      }
+
+      saveLS(LS_LEDGER, newLedger);
+      setLedgerRecords(newLedger);
+
+      // Save to Firebase Firestore (instant offline caching + cloud sync)
+      saveLedgerRecord(rec).catch(err => {
+        console.warn('Firestore ledger offline/notice:', err);
+      });
+
+      setForm(EMPTY_FORM);
+      if (onClearEditing) onClearEditing();
     };
 
-    let newLedger;
-    if (editingLedger) {
-      newLedger = ledgerRecords.map(r => (r.id === id ? rec : r));
-    } else {
-      newLedger = [rec, ...ledgerRecords];
+    if (!isAdmin && onRequestUnlock) {
+      return onRequestUnlock(proceed);
     }
-
-    saveLS(LS_LEDGER, newLedger);
-    setLedgerRecords(newLedger);
-
-    setForm(EMPTY_FORM);
-    if (onClearEditing) onClearEditing();
+    proceed();
   };
 
   const handleCancel = () => {

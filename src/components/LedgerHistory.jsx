@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { fmt, saveLS, LS_LEDGER, LS_PIRIVU } from '../utils';
+import { deleteLedgerRecord } from '../services/db';
 import { exportLedger } from '../excel';
 import {
   IconSearch,
@@ -27,24 +28,44 @@ export default function LedgerHistory({
   onGoToLedgerEntry,
   onStatement,
   statementLoading,
-  onGoToReports
+  onGoToReports,
+  isAdmin,
+  onRequestUnlock
 }) {
   const [search, setSearch] = useState('');
   const [typeChip, setTypeChip] = useState('all');
   const [catChip, setCatChip] = useState('all');
 
-  const handleDelete = id => {
-    if (!confirm('ഈ എൻട്രി ഡിലീറ്റ് ചെയ്യണോ?')) return;
-    const rec = ledgerRecords.find(r => r.id === id);
-    if (rec && rec.id.startsWith('pirivu_')) {
-      const pId = rec.id.replace('pirivu_', '');
-      const newPirivu = pirivuRecords.filter(p => p.id !== pId);
-      saveLS(LS_PIRIVU, newPirivu);
-      if (setPirivuRecords) setPirivuRecords(newPirivu);
+  const handleEdit = r => {
+    if (!isAdmin && onRequestUnlock) {
+      return onRequestUnlock(() => onEditLedger(r));
     }
-    const newLedger = ledgerRecords.filter(r => r.id !== id);
-    saveLS(LS_LEDGER, newLedger);
-    setLedgerRecords(newLedger);
+    onEditLedger(r);
+  };
+
+  const handleDelete = id => {
+    const proceed = () => {
+      if (!confirm('ഈ എൻട്രി ഡിലീറ്റ് ചെയ്യണോ?')) return;
+      const rec = ledgerRecords.find(r => r.id === id);
+      if (rec && rec.id.startsWith('pirivu_')) {
+        const pId = rec.id.replace('pirivu_', '');
+        const newPirivu = pirivuRecords.filter(p => p.id !== pId);
+        saveLS(LS_PIRIVU, newPirivu);
+        if (setPirivuRecords) setPirivuRecords(newPirivu);
+      }
+      const newLedger = ledgerRecords.filter(r => r.id !== id);
+      saveLS(LS_LEDGER, newLedger);
+      setLedgerRecords(newLedger);
+
+      deleteLedgerRecord(id).catch(err => {
+        console.warn('Cloud delete ledger notice:', err);
+      });
+    };
+
+    if (!isAdmin && onRequestUnlock) {
+      return onRequestUnlock(proceed);
+    }
+    proceed();
   };
 
   const filtered = ledgerRecords.filter(r => {
@@ -199,7 +220,7 @@ export default function LedgerHistory({
 
               <div className="card-actions">
                 <button
-                  onClick={() => onEditLedger(r)}
+                  onClick={() => handleEdit(r)}
                   style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
                 >
                   <IconPencil size={13} />

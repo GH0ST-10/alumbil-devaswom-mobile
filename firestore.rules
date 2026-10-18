@@ -1,0 +1,46 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Schema validation for Pirivu (contributions)
+    function isValidPirivu() {
+      let data = request.resource.data;
+      return data.name is string && data.name.size() > 0
+        && data.date is string && data.date.size() > 0;
+    }
+
+    // Schema validation for Ledger (income / expense)
+    function isValidLedger() {
+      let data = request.resource.data;
+      return data.desc is string && data.desc.size() > 0
+        && data.amount is number && data.amount > 0
+        && (data.type == 'income' || data.type == 'expense');
+    }
+
+    // 1. Pirivu collection: Live read for all members, validated write
+    match /pirivu/{docId} {
+      allow read: if true;
+      allow create, update: if isValidPirivu();
+      allow delete: if true;
+    }
+
+    // 2. Ledger collection: Live read for all members, validated write
+    match /ledger/{docId} {
+      allow read: if true;
+      allow create, update: if isValidLedger();
+      allow delete: if true;
+    }
+
+    // 3. Security Config: Holds cloud-synced SHA-256 PIN hash
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if request.resource.data.pinHash is string;
+    }
+
+    // Default deny for all other documents/collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

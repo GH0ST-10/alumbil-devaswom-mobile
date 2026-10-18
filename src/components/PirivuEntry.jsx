@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { genId, saveLS, LS_PIRIVU, LS_LEDGER, syncPirivuToLedger, statusOf, STATUS_META, fmt } from '../utils';
+import { savePirivuRecord } from '../services/db';
 import { IconUserPlus, IconPencil, IconPlus, IconCheck, IconSearch, IconArrowRight } from './Icons';
 
 const EMPTY_FORM = {
@@ -25,7 +26,9 @@ export default function PirivuEntry({
   setLedgerRecords,
   editingPerson,
   onClearEditing,
-  onGoToSearch
+  onGoToSearch,
+  isAdmin,
+  onRequestUnlock
 }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const formRef = useRef(null);
@@ -54,35 +57,47 @@ export default function PirivuEntry({
     if (!form.name.trim()) return alert('പേര് നൽകുക');
     if (form.receipt === '' && form.paid === '') return alert('രസീത് തുകയോ നൽകിയ തുകയോ നൽകുക');
 
-    const id = editingPerson ? editingPerson.id : genId();
-    const rec = {
-      id,
-      name: form.name.trim(),
-      house: form.house.trim(),
-      receiptno: form.receiptno.trim(),
-      phone: form.phone.trim(),
-      date: form.date,
-      receipt: form.receipt !== '' ? Number(form.receipt) : 0,
-      paid: form.paid !== '' ? Number(form.paid) : 0,
-      occasion: form.occasion.trim(),
-      remarks: form.remarks.trim()
+    const proceed = () => {
+      const id = editingPerson ? editingPerson.id : genId();
+      const rec = {
+        id,
+        name: form.name.trim(),
+        house: form.house.trim(),
+        receiptno: form.receiptno.trim(),
+        phone: form.phone.trim(),
+        date: form.date,
+        receipt: form.receipt !== '' ? Number(form.receipt) : 0,
+        paid: form.paid !== '' ? Number(form.paid) : 0,
+        occasion: form.occasion.trim(),
+        remarks: form.remarks.trim()
+      };
+
+      let newPirivu;
+      if (editingPerson) {
+        newPirivu = pirivuRecords.map(r => (r.id === id ? rec : r));
+      } else {
+        newPirivu = [rec, ...pirivuRecords];
+      }
+      saveLS(LS_PIRIVU, newPirivu);
+      setPirivuRecords(newPirivu);
+
+      const newLedger = syncPirivuToLedger(id, rec, ledgerRecords);
+      saveLS(LS_LEDGER, newLedger);
+      setLedgerRecords(newLedger);
+
+      // Save to Firebase Firestore (instant offline caching + cloud sync)
+      savePirivuRecord(rec, ledgerRecords).catch(err => {
+        console.warn('Firestore offline/notice:', err);
+      });
+
+      setForm(EMPTY_FORM);
+      if (onClearEditing) onClearEditing();
     };
 
-    let newPirivu;
-    if (editingPerson) {
-      newPirivu = pirivuRecords.map(r => (r.id === id ? rec : r));
-    } else {
-      newPirivu = [rec, ...pirivuRecords];
+    if (!isAdmin && onRequestUnlock) {
+      return onRequestUnlock(proceed);
     }
-    saveLS(LS_PIRIVU, newPirivu);
-    setPirivuRecords(newPirivu);
-
-    const newLedger = syncPirivuToLedger(id, rec, ledgerRecords);
-    saveLS(LS_LEDGER, newLedger);
-    setLedgerRecords(newLedger);
-
-    setForm(EMPTY_FORM);
-    if (onClearEditing) onClearEditing();
+    proceed();
   };
 
   const handleCancel = () => {
