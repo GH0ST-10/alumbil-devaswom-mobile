@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useApkDownload } from '../useApkDownload';
+import { IconBell, IconDownload, IconCheckCircle, IconAlertTriangle, IconRefresh } from './Icons';
 
 /**
  * UpdateBanner
@@ -108,7 +109,7 @@ export default function UpdateBanner({ remoteInfo, onLater }) {
       <div style={card}>
         <div style={inner}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-            <div style={iconBox}>🔔</div>
+            <div style={iconBox}><IconBell size={20} /></div>
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 800, fontSize: '15px' }}>പുതിയ അപ്‌ഡേറ്റ് ലഭ്യം!</div>
               <div style={{ fontSize: '12px', opacity: 0.85, marginTop: '1px' }}>
@@ -135,7 +136,8 @@ export default function UpdateBanner({ remoteInfo, onLater }) {
 
           <div style={{ display: 'flex', gap: '10px' }}>
             <button onClick={handleInstall} style={btnPrimary}>
-              ⬇️ അപ്‌ഡേറ്റ് ചെയ്യൂ
+              <IconDownload size={16} />
+              <span>അപ്‌ഡേറ്റ് ചെയ്യൂ</span>
             </button>
             <button onClick={handleLater} style={btnSecondary}>
               പിന്നീട്
@@ -152,7 +154,7 @@ export default function UpdateBanner({ remoteInfo, onLater }) {
       <div style={card}>
         <div style={{ ...inner, background: 'linear-gradient(135deg, #15803d 0%, #1f9d55 100%)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-            <div style={iconBox}>✅</div>
+            <div style={iconBox}><IconCheckCircle size={20} /></div>
             <div>
               <div style={{ fontWeight: 800, fontSize: '15px' }}>ഡൗൺലോഡ് ആരംഭിച്ചു!</div>
               <div style={{ fontSize: '12px', opacity: 0.85, marginTop: '1px' }}>
@@ -169,7 +171,7 @@ export default function UpdateBanner({ remoteInfo, onLater }) {
               lineHeight: 1.6,
             }}
           >
-            📲 ഡൗൺലോഡ് പൂർത്തിയാകുമ്പോൾ ഫോൺ <strong>Notification</strong>-ൽ നിന്നോ{' '}
+            ഡൗൺലോഡ് പൂർത്തിയാകുമ്പോൾ ഫോൺ <strong>Notification</strong>-ൽ നിന്നോ{' '}
             <strong>Downloads</strong> ഫോൾഡറിൽ നിന്നോ ഫയൽ ക്ലിക്ക് ചെയ്ത് <strong>Install / Update</strong> ചെയ്യുക.
           </div>
           <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
@@ -177,7 +179,8 @@ export default function UpdateBanner({ remoteInfo, onLater }) {
               onClick={handleInstall}
               style={{ ...btnPrimary, background: 'rgba(255,255,255,0.25)', color: '#fff' }}
             >
-              🔄 വീണ്ടും ഡൗൺലോഡ്
+              <IconRefresh size={15} />
+              <span>വീണ്ടും ഡൗൺലോഡ്</span>
             </button>
             <button onClick={handleLater} style={btnSecondary}>
               അടക്കൂ
@@ -193,7 +196,7 @@ export default function UpdateBanner({ remoteInfo, onLater }) {
     <div style={card}>
       <div style={{ ...inner, background: 'linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-          <div style={iconBox}>⚠️</div>
+          <div style={iconBox}><IconAlertTriangle size={20} /></div>
           <div>
             <div style={{ fontWeight: 800, fontSize: '15px' }}>ഡൗൺലോഡ് പരാജയപ്പെട്ടു</div>
             <div style={{ fontSize: '12px', opacity: 0.85, marginTop: '1px' }}>
@@ -204,7 +207,8 @@ export default function UpdateBanner({ remoteInfo, onLater }) {
 
         <div style={{ display: 'flex', gap: '10px' }}>
           <button onClick={handleInstall} style={btnPrimary}>
-            🔄 വീണ്ടും ശ്രമിക്കൂ
+            <IconRefresh size={15} />
+            <span>വീണ്ടും ശ്രമിക്കൂ</span>
           </button>
           <button onClick={handleLater} style={btnSecondary}>
             റദ്ദാക്കൂ

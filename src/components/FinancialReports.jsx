@@ -21,7 +21,9 @@ import {
   IconCopy,
   IconCheck,
   IconUsers,
-  IconInbox
+  IconInbox,
+  IconClock,
+  IconGlobe
 } from './Icons';
 
 export default function FinancialReports({
@@ -351,29 +353,37 @@ ${topCats ? `📌 *പ്രധാന ചെലവുകൾ:*\n${topCats}\n━�
             type="button"
             className={'filter-pill' + (filterMode === 'month' ? ' active' : '')}
             onClick={() => setFilterMode('month')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >
-            🗓️ മാസം തിരിച്ച്
+            <IconCalendar size={14} />
+            <span>മാസം തിരിച്ച്</span>
           </button>
           <button
             type="button"
             className={'filter-pill' + (filterMode === 'year' ? ' active' : '')}
             onClick={() => setFilterMode('year')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >
-            📅 വർഷം തിരിച്ച്
+            <IconCalendar size={14} />
+            <span>വർഷം തിരിച്ച്</span>
           </button>
           <button
             type="button"
             className={'filter-pill' + (filterMode === 'date' ? ' active' : '')}
             onClick={() => setFilterMode('date')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >
-            ⏱️ തീയതി തിരിച്ച്
+            <IconClock size={14} />
+            <span>തീയതി തിരിച്ച്</span>
           </button>
           <button
             type="button"
             className={'filter-pill' + (filterMode === 'all' ? ' active' : '')}
             onClick={() => setFilterMode('all')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >
-            🌐 എല്ലാം (ALL)
+            <IconGlobe size={14} />
+            <span>എല്ലാം (ALL)</span>
           </button>
         </div>
 

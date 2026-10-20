@@ -1,12 +1,13 @@
 import { useState, useRef } from 'react';
 import { genId, saveLS, LS_LEDGER, EXPENSE_CATEGORIES, fmt } from '../utils';
 import { exportLedger } from '../excel';
+import { IconFileSpreadsheet } from './Icons';
 
 const EMPTY_FORM = { date: '', amount: '', desc: '', category: '' };
 
 function LedgerCard({ r, onEdit, onDelete }) {
   const isIncome = r.type === 'income';
-  const subParts = [r.date || '', r.category ? ' · ' + r.category : '', r.linkedPirivu ? ' · 🔗 പണപ്പിരിവിൽ നിന്ന് ഓട്ടോമാറ്റിക്' : ''].filter(p => p.trim());
+  const subParts = [r.date || '', r.category ? ' · ' + r.category : '', r.linkedPirivu ? ' · (പണപ്പിരിവിൽ നിന്ന് ഓട്ടോമാറ്റിക്)' : ''].filter(p => p.trim());
   return (
     <div className="card">
       <div className="card-top">
@@ -148,7 +149,15 @@ export default function LedgerSection({ ledgerRecords, setLedgerRecords, pirivuR
       </div>
 
       <div className="btn-row" style={{ margin: '14px 0 30px' }}>
-        <button id="ledgerExportBtn" className="btn gold" onClick={() => exportLedger(ledgerRecords, pirivuRecords)}>📊 എക്സലിലേക്ക് എക്സ്പോർട്ട് ചെയ്യുക (എല്ലാ ടാബുകളും)</button>
+        <button
+          id="ledgerExportBtn"
+          className="btn gold"
+          onClick={() => exportLedger(ledgerRecords, pirivuRecords)}
+          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+        >
+          <IconFileSpreadsheet size={16} />
+          <span>എക്സലിലേക്ക് എക്സ്പോർട്ട് ചെയ്യുക (എല്ലാ ടാബുകളും)</span>
+        </button>
       </div>
     </div>
   );

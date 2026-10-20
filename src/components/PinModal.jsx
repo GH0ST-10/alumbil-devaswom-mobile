@@ -6,7 +6,7 @@ import {
   DEFAULT_PIN,
   MASTER_RECOVERY_KEY
 } from '../services/db';
-import { IconCheck } from './Icons';
+import { IconCheck, IconLock, IconKey, IconClock, IconInfo } from './Icons';
 
 export const LS_ADMIN_AUTH = 'devaswom_admin_auth_v1';
 export const LS_CACHED_PIN_HASH = 'devaswom_cached_pin_hash_v1';
@@ -255,8 +255,21 @@ export default function PinModal({
         }}
         onClick={e => e.stopPropagation()}
       >
-        <div style={{ fontSize: 38, marginBottom: 6 }}>
-          {mode === 'recovery' ? '🔑' : '🔐'}
+        <div
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: '16px',
+            background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.15), rgba(184, 134, 11, 0.25))',
+            color: '#d97706',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 12px auto',
+            boxShadow: '0 4px 12px rgba(217, 119, 6, 0.12)'
+          }}
+        >
+          {mode === 'recovery' ? <IconKey size={26} /> : <IconLock size={26} />}
         </div>
 
         <h3 style={{ margin: '0 0 6px 0', fontSize: 18, fontWeight: 700 }}>
@@ -272,8 +285,9 @@ export default function PinModal({
         </p>
 
         {successNotice ? (
-          <div style={{ padding: '14px', background: 'var(--green-bg, #ecfdf5)', color: 'var(--green, #059669)', borderRadius: 12, fontWeight: 600, fontSize: 14 }}>
-            ✓ {successNotice}
+          <div style={{ padding: '14px', background: 'var(--green-bg, #ecfdf5)', color: 'var(--green, #059669)', borderRadius: 12, fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <IconCheck size={18} />
+            <span>{successNotice}</span>
           </div>
         ) : mode === 'verify' ? (
           /* ================= VERIFY MODE ================= */
@@ -307,8 +321,9 @@ export default function PinModal({
             />
 
             {cooldownSeconds > 0 && (
-              <div style={{ color: '#dc2626', fontSize: 13, fontWeight: 600, marginBottom: 12 }}>
-                ⏳ ദയവായി കാത്തിരിക്കുക: {cooldownSeconds} സെക്കൻഡ്
+              <div style={{ color: '#dc2626', fontSize: 13, fontWeight: 600, marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                <IconClock size={16} />
+                <span>ദയവായി കാത്തിരിക്കുക: {cooldownSeconds} സെക്കൻഡ്</span>
               </div>
             )}
 
@@ -490,8 +505,11 @@ export default function PinModal({
               </button>
             </div>
 
-            <div style={{ marginTop: 14, padding: '8px 10px', background: '#fef3c7', borderRadius: 8, fontSize: 11, color: '#92400e', textAlign: 'left' }}>
-              💡 <b>അഡ്മിൻ ശ്രദ്ധയ്ക്ക്:</b> Master Key യും ലഭ്യമല്ലെങ്കിൽ Firebase Console-ൽ കയറി <code>config/security</code> ഡോക്യുമെന്റ് ഡിലീറ്റ് ചെയ്താൽ തനിയെ <code>2024</code> ലേക്ക് റീസെറ്റ് ആകും.
+            <div style={{ marginTop: 14, padding: '8px 10px', background: '#fef3c7', borderRadius: 8, fontSize: 11, color: '#92400e', textAlign: 'left', display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+              <IconInfo size={15} style={{ flexShrink: 0, marginTop: 1, color: '#b45309' }} />
+              <div>
+                <b>അഡ്മിൻ ശ്രദ്ധയ്ക്ക്:</b> Master Key യും ലഭ്യമല്ലെങ്കിൽ Firebase Console-ൽ കയറി <code>config/security</code> ഡോക്യുമെന്റ് ഡിലീറ്റ് ചെയ്താൽ തനിയെ <code>2024</code> ലേക്ക് റീസെറ്റ് ആകും.
+              </div>
             </div>
           </form>
         )}

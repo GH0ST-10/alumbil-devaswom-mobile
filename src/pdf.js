@@ -37,7 +37,7 @@ function buildReceiptHTML(r) {
       <div style="margin-top:10px;font-size:12.5px;">
         ${target > paid
           ? `<div style="color:#b45309;font-weight:600;">രസീത് തുക: ${fmt(target)} &nbsp;·&nbsp; ബാക്കി: ${fmt(balance)}</div>`
-          : `<div style="color:#15803d;font-weight:700;">✅ പൂർണമായി അടച്ചു</div>`}
+          : `<div style="color:#15803d;font-weight:700;">✓ പൂർണമായി അടച്ചു</div>`}
       </div>
       ${r.remarks ? `<div style="color:#78716c;font-size:12px;margin-top:12px;font-style:italic;">കുറിപ്പ്: ${esc(r.remarks)}</div>` : ''}
     </div>

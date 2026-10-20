@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { genId, saveLS, LS_PIRIVU, LS_LEDGER, statusOf, STATUS_META, syncPirivuToLedger, fmt } from '../utils';
 import { shareReceipt } from '../pdf';
 import { exportPirivu } from '../excel';
+import { IconFileSpreadsheet, IconReceipt } from './Icons';
 
 const EMPTY_FORM = { name: '', house: '', receiptno: '', phone: '', date: '', receipt: '', paid: '', occasion: '', remarks: '' };
 
@@ -36,7 +37,12 @@ function PirivuCard({ r, onEdit, onDelete, onReceipt }) {
       <div className="card-actions">
         <button onClick={() => onEdit(r.id)}>എഡിറ്റ്</button>
         <button onClick={() => onDelete(r.id)}>ഡിലീറ്റ്</button>
-        {paid > 0 && <button onClick={() => onReceipt(r)}>🧾 രസീത് ഷെയർ ചെയ്യുക</button>}
+        {paid > 0 && (
+          <button onClick={() => onReceipt(r)} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <IconReceipt size={14} />
+            <span>രസീത് ഷെയർ ചെയ്യുക</span>
+          </button>
+        )}
       </div>
     </div>
   );
@@ -165,7 +171,15 @@ export default function PirivuSection({ pirivuRecords, setPirivuRecords, ledgerR
       </div>
 
       <div className="btn-row" style={{ margin: '14px 0' }}>
-        <button id="pirivuExportBtn" className="btn gold" onClick={() => exportPirivu(pirivuRecords, ledgerRecords)}>📊 എക്സലിലേക്ക് എക്സ്പോർട്ട് ചെയ്യുക (എല്ലാ ടാബുകളും)</button>
+        <button
+          id="pirivuExportBtn"
+          className="btn gold"
+          onClick={() => exportPirivu(pirivuRecords, ledgerRecords)}
+          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+        >
+          <IconFileSpreadsheet size={16} />
+          <span>എക്സലിലേക്ക് എക്സ്പോർട്ട് ചെയ്യുക (എല്ലാ ടാബുകളും)</span>
+        </button>
       </div>
     </div>
   );

@@ -1,5 +1,15 @@
 import { fmt } from '../utils';
-import { IconFileText, IconSpinner, IconChartBar } from './Icons';
+import {
+  IconFileText,
+  IconSpinner,
+  IconChartBar,
+  IconCloud,
+  IconCloudOff,
+  IconCloudUpload,
+  IconLock,
+  IconUnlock,
+  IconInfo
+} from './Icons';
 
 export default function Header({
   pirivuRecords,
@@ -36,7 +46,7 @@ export default function Header({
               style={{
                 fontSize: 11,
                 fontWeight: 600,
-                padding: '3px 8px',
+                padding: '3px 9px',
                 borderRadius: 20,
                 background: isOnline ? 'rgba(16, 185, 129, 0.22)' : 'rgba(245, 158, 11, 0.22)',
                 color: isOnline ? '#34d399' : '#fbbf24',
@@ -47,15 +57,7 @@ export default function Header({
               }}
               title={isOnline ? 'ക്ലൗഡുമായി ലൈവ് കണക്റ്റഡ് ആണ്' : 'ഓഫ്‌ലൈൻ കാഷെയിലാണ് സേവ് ആകുന്നത്'}
             >
-              <span
-                style={{
-                  width: 7,
-                  height: 7,
-                  borderRadius: '50%',
-                  background: isOnline ? '#34d399' : '#fbbf24',
-                  boxShadow: isOnline ? '0 0 6px #34d399' : 'none'
-                }}
-              />
+              {isOnline ? <IconCloud size={13} /> : <IconCloudOff size={13} />}
               <span>{isOnline ? 'ലൈവ് സിങ്ക്' : 'ഓഫ്‌ലൈൻ'}</span>
             </div>
 
@@ -77,7 +79,17 @@ export default function Header({
                 gap: 5
               }}
             >
-              <span>{isAdmin ? '🔓 കമ്മിറ്റി അഡ്മിൻ' : '🔒 വ്യൂ ഒൺലി'}</span>
+              {isAdmin ? (
+                <>
+                  <IconUnlock size={13} style={{ color: '#fbbf24' }} />
+                  <span>കമ്മിറ്റി അഡ്മിൻ</span>
+                </>
+              ) : (
+                <>
+                  <IconLock size={13} />
+                  <span>വ്യൂ ഒൺലി</span>
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -157,8 +169,9 @@ export default function Header({
               gap: 10
             }}
           >
-            <span style={{ fontSize: 12, color: '#fef3c7' }}>
-              ℹ️ ഫോണിലെ മുൻകാല വിവരങ്ങൾ ക്ലൗഡിലേക്ക് അപ്‌ലോഡ് ചെയ്യണോ?
+            <span style={{ fontSize: 12, color: '#fef3c7', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <IconInfo size={15} style={{ flexShrink: 0, color: '#fbbf24' }} />
+              <span>ഫോണിലെ മുൻകാല വിവരങ്ങൾ ക്ലൗഡിലേക്ക് അപ്‌ലോഡ് ചെയ്യണോ?</span>
             </span>
             <button
               type="button"
@@ -172,10 +185,14 @@ export default function Header({
                 fontWeight: 700,
                 fontSize: 12,
                 cursor: 'pointer',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5
               }}
             >
-              ക്ലൗഡ് സിങ്ക്
+              <IconCloudUpload size={14} />
+              <span>ക്ലൗഡ് സിങ്ക്</span>
             </button>
           </div>
         )}
