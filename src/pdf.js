@@ -201,13 +201,15 @@ function buildStatementHTML(pirivuRecords, ledgerRecords) {
 }
 
 async function renderHTMLToPDF(html, scale = 2) {
-  // Content width used in buildStatementHTML / buildDetailedReportHTML
-  // Use a fixed wide viewport so mobile WebViews don't clip the layout
+  // The statement/report HTML is 680-760px wide + padding.
+  // On Android (360px WebView viewport) html2canvas clips the render
+  // to the body width even when the element is wider.
+  // Fix: use onclone to force the CLONED document's html/body to be wide.
   const CONTENT_WIDTH = 840;
 
   const holder = document.createElement('div');
   holder.style.cssText = [
-    'position:fixed',
+    'position:absolute',
     'left:-9999px',
     'top:0',
     `width:${CONTENT_WIDTH}px`,
@@ -218,11 +220,10 @@ async function renderHTMLToPDF(html, scale = 2) {
   holder.innerHTML = html;
   document.body.appendChild(holder);
 
-  // Two animation frames so the browser lays out the full DOM width
+  // Wait for full layout
   await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
 
   const el = holder.firstElementChild;
-  // Measure the actual rendered width (never less than CONTENT_WIDTH)
   const elWidth  = Math.max(el.scrollWidth, CONTENT_WIDTH);
   const elHeight = el.scrollHeight;
 
@@ -230,21 +231,33 @@ async function renderHTMLToPDF(html, scale = 2) {
     scale,
     backgroundColor: '#fffdf9',
     useCORS: true,
-    // Explicitly tell html2canvas the full element dimensions
     width: elWidth,
     height: elHeight,
-    // Pretend the window is wide — prevents internal viewport clamping
     windowWidth: elWidth,
     windowHeight: elHeight,
     scrollX: 0,
     scrollY: 0,
     x: 0,
     y: 0,
+    // KEY FIX: force the cloned document body to be as wide as the content.
+    // Without this, Android WebView clamps the render to ~360px viewport
+    // and clips anything wider (the right side of the PDF disappears).
+    onclone: (clonedDoc) => {
+      const s = 'width:' + elWidth + 'px !important;max-width:none !important;overflow:visible !important;';
+      clonedDoc.documentElement.style.cssText += s;
+      clonedDoc.body.style.cssText += s;
+      // Also widen the cloned holder so nothing clips
+      const clonedHolder = clonedDoc.body.querySelector('[style*="-9999px"]');
+      if (clonedHolder) {
+        clonedHolder.style.width = elWidth + 'px';
+        clonedHolder.style.minWidth = elWidth + 'px';
+        clonedHolder.style.overflow = 'visible';
+      }
+    },
   });
   document.body.removeChild(holder);
 
   const pxToMm = px => px * 0.264583;
-  // canvas.width is already at device-pixel (scale×) resolution
   const wMm = pxToMm(canvas.width  / scale);
   const hMm = pxToMm(canvas.height / scale);
   const doc = new jsPDF({ unit: 'mm', format: [wMm, hMm] });
