@@ -26,9 +26,7 @@ import {
 
 export default function FinancialReports({
   pirivuRecords = [],
-  ledgerRecords = [],
-  onStatement,
-  statementLoading = false
+  ledgerRecords = []
 }) {
   const distinctMonths = useMemo(() => getDistinctMonths(pirivuRecords, ledgerRecords), [pirivuRecords, ledgerRecords]);
   const distinctYears = useMemo(() => getDistinctYears(pirivuRecords, ledgerRecords), [pirivuRecords, ledgerRecords]);

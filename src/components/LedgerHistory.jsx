@@ -16,9 +16,6 @@ import {
   IconChartBar
 } from './Icons';
 
-const INCOME_CATS = ['പണപ്പിരിവ്', 'വഴിപാട്', 'കാണിക്ക', 'വാടക', 'ബാങ്ക് പലിശ', 'മറ്റ് വരവ്'];
-const EXPENSE_CATS = ['പൂജാ സാധനങ്ങൾ', 'ശമ്പളം / ദക്ഷിണ', 'വൈദ്യുതി / വെള്ളം', 'അറ്റകുറ്റപ്പണി', 'ഉത്സവ ചെലവ്', 'മറ്റ് ചെലവ്'];
-
 export default function LedgerHistory({
   ledgerRecords,
   setLedgerRecords,

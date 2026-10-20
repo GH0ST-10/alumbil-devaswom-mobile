@@ -7,6 +7,9 @@ on:
       - main
       - master
 
+permissions:
+  contents: write   # needed to create GitHub Releases
+
 jobs:
   build:
     name: Build Android APK
@@ -31,7 +34,44 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
+      - name: 🏷️ Write version.json (auto-update manifest)
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          BUILD_DATE=$(date -u +"%Y-%m-%d")
+          COMMIT_MSG=$(git log -1 --pretty=%s)
+          TAG="build-${BUILD_NUMBER}"
+          APK_FILENAME="AlumbilDevaswom-v1.0.${BUILD_NUMBER}.apk"
+          DOWNLOAD_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/${APK_FILENAME}"
+
+          mkdir -p public
+          BUILD_DATE="$BUILD_DATE" COMMIT_MSG="$COMMIT_MSG" TAG="$TAG" DOWNLOAD_URL="$DOWNLOAD_URL" node -e '
+            const fs = require("fs");
+            const data = {
+              version: "1.0." + process.env.BUILD_NUMBER,
+              buildNumber: Number(process.env.BUILD_NUMBER),
+              buildDate: process.env.BUILD_DATE,
+              releaseNotes: process.env.COMMIT_MSG,
+              apkUrl: process.env.DOWNLOAD_URL,
+              tag: process.env.TAG
+            };
+            fs.writeFileSync("public/version.json", JSON.stringify(data, null, 2));
+          '
+
+          echo "✅ version.json:"
+          cat public/version.json
+
+          echo "BUILD_NUMBER=${BUILD_NUMBER}" >> $GITHUB_ENV
+          echo "TAG=${TAG}"                   >> $GITHUB_ENV
+          echo "APK_FILENAME=${APK_FILENAME}" >> $GITHUB_ENV
+          echo "BUILD_DATE=${BUILD_DATE}"     >> $GITHUB_ENV
+          echo "COMMIT_MSG<<EOF"              >> $GITHUB_ENV
+          echo "${COMMIT_MSG}"                >> $GITHUB_ENV
+          echo "EOF"                          >> $GITHUB_ENV
+
       - name: 🏗️ Build React Web App
+        env:
+          APP_BUILD_NUMBER: ${{ github.run_number }}
         run: npm run build
 
       - name: 📱 Add Android Platform
@@ -43,15 +83,47 @@ jobs:
       - name: 🔄 Sync Capacitor Android
         run: npx cap sync android
 
+      - name: 🔐 Patch AndroidManifest (REQUEST_INSTALL_PACKAGES)
+        run: |
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          if [ -f "$MANIFEST" ]; then
+            if ! grep -q "REQUEST_INSTALL_PACKAGES" "$MANIFEST"; then
+              sed -i 's|<uses-permission android:name="android.permission.INTERNET" />|<uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />|' "$MANIFEST"
+              echo "✅ Added REQUEST_INSTALL_PACKAGES permission"
+            fi
+          fi
+
       - name: 🔨 Build Standalone APK
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
-      - name: 📤 Upload APK Artifact
+      - name: 📝 Rename APK to friendly filename
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk "${{ env.APK_FILENAME }}"
+          echo "✅ APK ready: ${{ env.APK_FILENAME }}"
+
+      - name: 🚀 Create GitHub Release & Upload APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          name: "ആലുമ്പിൽ ദേവസ്ഥാനം v1.0.${{ env.BUILD_NUMBER }}"
+          body: |
+            ## 📱 APK Download
+            **Build:** #${{ env.BUILD_NUMBER }}  
+            **Date:** ${{ env.BUILD_DATE }}  
+            **Changes:** ${{ env.COMMIT_MSG }}
+
+            ⬇️ Download the APK below and tap to install.
+          files: |
+            ${{ env.APK_FILENAME }}
+            public/version.json
+          prerelease: false
+
+      - name: 📤 Upload APK Artifact (backup)
         uses: actions/upload-artifact@v4
         with:
           name: Alumbil-Devaswom-APK
-          path: android/app/build/outputs/apk/debug/*.apk
+          path: ${{ env.APK_FILENAME }}
           retention-days: 30

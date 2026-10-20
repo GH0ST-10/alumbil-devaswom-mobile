@@ -12,7 +12,7 @@ function LedgerCard({ r, onEdit, onDelete }) {
       <div className="card-top">
         <div>
           <div className="card-name">{r.desc}</div>
-          <div className="card-sub">{r.date || ''}{r.category ? ' · ' + r.category : ''}{r.linkedPirivu ? ' · 🔗 പണപ്പിരിവിൽ നിന്ന് ഓട്ടോമാറ്റിക്' : ''}</div>
+          <div className="card-sub">{subParts.join('')}</div>
         </div>
         <div className={`txn-amt ${r.type}`}>{isIncome ? '+' : '−'} {fmt(r.amount)}</div>
       </div>

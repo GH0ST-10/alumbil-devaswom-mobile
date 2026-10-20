@@ -10,6 +10,8 @@ import LedgerHistory from './components/LedgerHistory';
 import FinancialReports from './components/FinancialReports';
 import BottomNav from './components/BottomNav';
 import PinModal, { LS_ADMIN_AUTH } from './components/PinModal';
+import UpdateBanner from './components/UpdateBanner';
+import { useAppUpdate } from './useAppUpdate';
 
 import { IconCoins, IconLedger, IconPlus, IconSearch, IconHistory, IconChartBar } from './components/Icons';
 
@@ -27,6 +29,9 @@ export default function App() {
   const [pinModalOpen, setPinModalOpen] = useState(false);
   const [pendingUnlockAction, setPendingUnlockAction] = useState(null);
   const [migrating, setMigrating] = useState(false);
+
+  // Auto-update check
+  const { updateAvailable, remoteInfo, dismiss } = useAppUpdate();
 
   // Network listener (Online / Offline status)
   useEffect(() => {
@@ -275,6 +280,11 @@ export default function App() {
           />
         )}
       </main>
+
+      {/* AUTO-UPDATE BANNER */}
+      {updateAvailable && (
+        <UpdateBanner remoteInfo={remoteInfo} onLater={dismiss} />
+      )}
 
       {/* APPLE iOS BOTTOM NAVIGATION BAR */}
       <BottomNav

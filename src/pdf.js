@@ -1,6 +1,7 @@
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { fmt, downloadBlob, waLinkFor } from './utils';
+import { directShareFile, shareOrSaveFile } from './nativeShare';
 
 /* ====== RECEIPT HTML ====== */
 function buildReceiptHTML(r) {
@@ -67,8 +68,6 @@ export async function makeReceiptImageBlob(r, scale = 3) {
 
   return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 }
-
-import { directShareFile, shareOrSaveFile } from './nativeShare';
 
 export async function shareReceipt(r) {
   const filename = 'Receipt_' + (r.name || 'contributor').replace(/\s+/g, '_') + '.png';
@@ -206,11 +205,21 @@ async function renderHTMLToPDF(html, scale = 2) {
   holder.style.position = 'fixed';
   holder.style.left = '-9999px';
   holder.style.top = '0';
+  // Force holder wide enough to contain the full layout (760px content + 80px padding)
+  // This prevents mobile viewports from clipping the right side of the PDF
+  holder.style.width = '840px';
+  holder.style.overflow = 'visible';
   holder.innerHTML = html;
   document.body.appendChild(holder);
   await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
 
-  const canvas = await html2canvas(holder.firstElementChild, { scale, backgroundColor: '#fffdf9', useCORS: true });
+  const canvas = await html2canvas(holder.firstElementChild, {
+    scale,
+    backgroundColor: '#fffdf9',
+    useCORS: true,
+    width: holder.firstElementChild.scrollWidth,
+    windowWidth: 840
+  });
   document.body.removeChild(holder);
 
   const pxToMm = px => px * 0.264583;
