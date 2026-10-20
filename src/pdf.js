@@ -127,133 +127,110 @@ function buildStatementHTML(pirivuRecords, ledgerRecords) {
 
   const catRows = (cats, total) => Object.entries(cats).map(([c, a]) => `
     <tr>
-      <td style="padding:6px 0;color:#2a1d12;">${esc(c)}</td>
-      <td style="padding:6px 0;text-align:right;font-weight:600;color:#2a1d12;">${fmt(a)}</td>
-      <td style="padding:6px 0;text-align:right;color:#8a7a68;font-size:11px;width:55px;">${total > 0 ? Math.round(a / total * 100) : 0}%</td>
+      <td style="padding:5px 8px;color:#2a1d12;font-size:12px;">${esc(c)}</td>
+      <td style="padding:5px 8px;text-align:right;font-weight:600;color:#2a1d12;font-size:12px;white-space:nowrap;">${fmt(a)}</td>
+      <td style="padding:5px 8px;text-align:right;color:#8a7a68;font-size:11px;width:40px;">${total > 0 ? Math.round(a / total * 100) : 0}%</td>
     </tr>
   `).join('');
 
+  // NOTE: width is 390px — must fit within smallest Android viewport (360px+)
+  // All multi-column grids are replaced with single-column stacks.
   return `
-  <div style="width:680px;background:#fffdf9;font-family:'Noto Sans Malayalam','Inter',sans-serif;color:#2a1d12;padding:32px 36px;">
-    <div style="text-align:center;border-bottom:2px solid #7a1f2b;padding-bottom:14px;margin-bottom:22px;">
-      <div style="font-size:24px;font-weight:800;color:#7a1f2b;">ആലുമ്പിൽ ദേവസ്ഥാനം</div>
-      <div style="font-size:14px;font-weight:700;color:#5c1620;margin-top:4px;">സാമ്പത്തിക സ്റ്റേറ്റ്മെന്റ് (യോഗം)</div>
-      <div style="font-size:11.5px;color:#8a7a68;margin-top:4px;">തയ്യാറാക്കിയത്: ${today}</div>
+  <div style="width:390px;background:#fffdf9;font-family:'Noto Sans Malayalam','Inter',sans-serif;color:#2a1d12;padding:20px 18px;box-sizing:border-box;">
+
+    <!-- HEADER -->
+    <div style="text-align:center;border-bottom:2px solid #7a1f2b;padding-bottom:12px;margin-bottom:16px;">
+      <div style="font-size:20px;font-weight:800;color:#7a1f2b;">ആലുമ്പിൽ ദേവസ്ഥാനം</div>
+      <div style="font-size:13px;font-weight:700;color:#5c1620;margin-top:3px;">സാമ്പത്തിക സ്റ്റേറ്റ്മെന്റ് (യോഗം)</div>
+      <div style="font-size:11px;color:#8a7a68;margin-top:3px;">തയ്യാറാക്കിയത്: ${today}</div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;">
-      <div style="background:#fff;border:1px solid #ecdfca;border-radius:10px;padding:12px 14px;">
-        <div style="font-size:11px;color:#8a7a68;font-weight:600;">ആകെ പിരിവ് രസീത്</div>
-        <div style="font-size:18px;font-weight:800;color:#7a1f2b;margin-top:2px;">${fmt(pirivuPledged)}</div>
-        <div style="font-size:10.5px;color:#8a7a68;margin-top:3px;">ലഭിച്ചത്: ${fmt(pirivuCollected)} (${pirivuPledged > 0 ? Math.round(pirivuCollected / pirivuPledged * 100) : 0}%)</div>
+    <!-- KPI CARDS (stacked) -->
+    <div style="margin-bottom:16px;display:flex;flex-direction:column;gap:8px;">
+      <div style="background:#fff;border:1px solid #ecdfca;border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:10px;color:#8a7a68;font-weight:600;">ആകെ പിരിവ് രസീത്</div>
+          <div style="font-size:10px;color:#8a7a68;margin-top:1px;">ലഭിച്ചത്: ${fmt(pirivuCollected)} (${pirivuPledged > 0 ? Math.round(pirivuCollected / pirivuPledged * 100) : 0}%)</div>
+        </div>
+        <div style="font-size:17px;font-weight:800;color:#7a1f2b;">${fmt(pirivuPledged)}</div>
       </div>
-      <div style="background:#fff;border:1px solid #ecdfca;border-radius:10px;padding:12px 14px;">
-        <div style="font-size:11px;color:#8a7a68;font-weight:600;">കൈവശമുള്ള ബാക്കി</div>
-        <div style="font-size:18px;font-weight:800;color:#1f9d55;margin-top:2px;">${fmt(balance)}</div>
-        <div style="font-size:10.5px;color:#8a7a68;margin-top:3px;">വരവ്: ${fmt(ledgerIncome)} · ചെലവ്: ${fmt(ledgerExpense)}</div>
+      <div style="background:#fff;border:1px solid #ecdfca;border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:10px;color:#8a7a68;font-weight:600;">കൈവശമുള്ള ബാക്കി</div>
+          <div style="font-size:10px;color:#8a7a68;margin-top:1px;">വരവ്: ${fmt(ledgerIncome)} · ചെലവ്: ${fmt(ledgerExpense)}</div>
+        </div>
+        <div style="font-size:17px;font-weight:800;color:#1f9d55;">${fmt(balance)}</div>
       </div>
     </div>
 
-    <div style="font-size:13px;font-weight:700;color:#7a1f2b;margin-bottom:8px;">1. പണപ്പിരിവ് സംഗ്രഹം</div>
-    <table style="width:100%;font-size:12px;border-collapse:collapse;margin-bottom:18px;background:#fff;border:1px solid #ecdfca;">
+    <!-- SECTION 1: COLLECTION SUMMARY -->
+    <div style="font-size:12px;font-weight:700;color:#7a1f2b;margin-bottom:6px;">1. പണപ്പിരിവ് സംഗ്രഹം</div>
+    <table style="width:100%;font-size:11.5px;border-collapse:collapse;margin-bottom:16px;background:#fff;border:1px solid #ecdfca;">
       <tr style="background:#fbf0d9;font-weight:700;color:#5c1620;">
-        <th style="padding:6px 10px;text-align:left;">വിഭാഗം</th>
-        <th style="padding:6px 10px;text-align:center;">എണ്ണം</th>
-        <th style="padding:6px 10px;text-align:right;">ശതമാനം</th>
+        <th style="padding:5px 8px;text-align:left;">വിഭാഗം</th>
+        <th style="padding:5px 8px;text-align:center;width:50px;">എണ്ണം</th>
+        <th style="padding:5px 8px;text-align:right;width:50px;">%</th>
       </tr>
-      <tr><td style="padding:6px 10px;border-top:1px solid #ecdfca;">പൂർണമായി അടച്ചവർ</td><td style="padding:6px 10px;text-align:center;border-top:1px solid #ecdfca;">${fullCount}</td><td style="padding:6px 10px;text-align:right;border-top:1px solid #ecdfca;">${pirivuRecords.length > 0 ? Math.round(fullCount / pirivuRecords.length * 100) : 0}%</td></tr>
-      <tr><td style="padding:6px 10px;border-top:1px solid #ecdfca;">ഭാഗികമായി അടച്ചവർ</td><td style="padding:6px 10px;text-align:center;border-top:1px solid #ecdfca;">${partialCount}</td><td style="padding:6px 10px;text-align:right;border-top:1px solid #ecdfca;">${pirivuRecords.length > 0 ? Math.round(partialCount / pirivuRecords.length * 100) : 0}%</td></tr>
-      <tr><td style="padding:6px 10px;border-top:1px solid #ecdfca;">അടയ്ക്കാത്തവർ</td><td style="padding:6px 10px;text-align:center;border-top:1px solid #ecdfca;">${unpaidCount}</td><td style="padding:6px 10px;text-align:right;border-top:1px solid #ecdfca;">${pirivuRecords.length > 0 ? Math.round(unpaidCount / pirivuRecords.length * 100) : 0}%</td></tr>
-      <tr style="font-weight:700;background:#fbf7f0;"><td style="padding:6px 10px;border-top:1px solid #ecdfca;">ആകെ അംഗങ്ങൾ</td><td style="padding:6px 10px;text-align:center;border-top:1px solid #ecdfca;">${pirivuRecords.length}</td><td style="padding:6px 10px;text-align:right;border-top:1px solid #ecdfca;">100%</td></tr>
+      <tr><td style="padding:5px 8px;border-top:1px solid #ecdfca;">പൂർണമായി അടച്ചവർ</td><td style="padding:5px 8px;text-align:center;border-top:1px solid #ecdfca;">${fullCount}</td><td style="padding:5px 8px;text-align:right;border-top:1px solid #ecdfca;">${pirivuRecords.length > 0 ? Math.round(fullCount / pirivuRecords.length * 100) : 0}%</td></tr>
+      <tr><td style="padding:5px 8px;border-top:1px solid #ecdfca;">ഭാഗികമായി അടച്ചവർ</td><td style="padding:5px 8px;text-align:center;border-top:1px solid #ecdfca;">${partialCount}</td><td style="padding:5px 8px;text-align:right;border-top:1px solid #ecdfca;">${pirivuRecords.length > 0 ? Math.round(partialCount / pirivuRecords.length * 100) : 0}%</td></tr>
+      <tr><td style="padding:5px 8px;border-top:1px solid #ecdfca;">അടയ്ക്കാത്തവർ</td><td style="padding:5px 8px;text-align:center;border-top:1px solid #ecdfca;">${unpaidCount}</td><td style="padding:5px 8px;text-align:right;border-top:1px solid #ecdfca;">${pirivuRecords.length > 0 ? Math.round(unpaidCount / pirivuRecords.length * 100) : 0}%</td></tr>
+      <tr style="font-weight:700;background:#fbf7f0;"><td style="padding:5px 8px;border-top:1px solid #ecdfca;">ആകെ അംഗങ്ങൾ</td><td style="padding:5px 8px;text-align:center;border-top:1px solid #ecdfca;">${pirivuRecords.length}</td><td style="padding:5px 8px;text-align:right;border-top:1px solid #ecdfca;">100%</td></tr>
     </table>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;">
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#1f9d55;margin-bottom:6px;">2. വരവ് — ഇനം തിരിച്ച്</div>
-        <table style="width:100%;font-size:12px;border-collapse:collapse;">
-          ${catRows(incomeByCategory, ledgerIncome)}
-          <tr style="border-top:1.5px solid #ecdfca;font-weight:700;">
-            <td style="padding:8px 0;">ആകെ വരവ്</td>
-            <td style="padding:8px 0;text-align:right;color:#1f9d55;">${fmt(ledgerIncome)}</td>
-            <td></td>
-          </tr>
-        </table>
+    <!-- SECTION 2: INCOME BY CATEGORY -->
+    <div style="font-size:12px;font-weight:700;color:#1f9d55;margin-bottom:6px;">2. വരവ് — ഇനം തിരിച്ച്</div>
+    <table style="width:100%;font-size:11.5px;border-collapse:collapse;margin-bottom:16px;background:#fff;border:1px solid #ecdfca;">
+      ${catRows(incomeByCategory, ledgerIncome)}
+      <tr style="border-top:1.5px solid #ecdfca;font-weight:700;background:#f5faf6;">
+        <td style="padding:6px 8px;">ആകെ വരവ്</td>
+        <td style="padding:6px 8px;text-align:right;color:#1f9d55;">${fmt(ledgerIncome)}</td>
+        <td></td>
+      </tr>
+    </table>
+
+    <!-- SECTION 3: EXPENSE BY CATEGORY -->
+    <div style="font-size:12px;font-weight:700;color:#c0392b;margin-bottom:6px;">3. ചെലവ് — ഇനം തിരിച്ച്</div>
+    <table style="width:100%;font-size:11.5px;border-collapse:collapse;margin-bottom:16px;background:#fff;border:1px solid #ecdfca;">
+      ${catRows(expenseByCategory, ledgerExpense)}
+      <tr style="border-top:1.5px solid #ecdfca;font-weight:700;background:#fdf5f5;">
+        <td style="padding:6px 8px;">ആകെ ചെലവ്</td>
+        <td style="padding:6px 8px;text-align:right;color:#c0392b;">${fmt(ledgerExpense)}</td>
+        <td></td>
+      </tr>
+    </table>
+
+    <!-- SIGNATURES -->
+    <div style="border-top:1px solid #ecdfca;padding-top:16px;margin-top:4px;">
+      <div style="display:flex;justify-content:space-between;color:#8a7a68;font-size:10px;">
+        <div>പ്രസിഡന്റ്: ____________</div>
+        <div>സെക്രട്ടറി: ____________</div>
       </div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#c0392b;margin-bottom:6px;">3. ചെലവ് — ഇനം തിരിച്ച്</div>
-        <table style="width:100%;font-size:12px;border-collapse:collapse;">
-          ${catRows(expenseByCategory, ledgerExpense)}
-          <tr style="border-top:1.5px solid #ecdfca;font-weight:700;">
-            <td style="padding:8px 0;">ആകെ ചെലവ്</td>
-            <td style="padding:8px 0;text-align:right;color:#c0392b;">${fmt(ledgerExpense)}</td>
-            <td></td>
-          </tr>
-        </table>
+      <div style="margin-top:10px;color:#8a7a68;font-size:10px;">
+        <div>ട്രഷറർ: ____________</div>
       </div>
     </div>
 
-    <div style="border-top:1px solid #ecdfca;padding-top:22px;margin-top:22px;display:flex;justify-content:space-between;color:#8a7a68;font-size:11px;">
-      <div>പ്രസിഡന്റ്: ___________________</div>
-      <div>സെക്രട്ടറി: ___________________</div>
-      <div>ട്രഷറർ: ___________________</div>
-    </div>
   </div>`;
 }
 
 async function renderHTMLToPDF(html, scale = 2) {
-  // The statement/report HTML is 680-760px wide + padding.
-  // On Android (360px WebView viewport) html2canvas clips the render
-  // to the body width even when the element is wider.
-  // Fix: use onclone to force the CLONED document's html/body to be wide.
-  const CONTENT_WIDTH = 840;
-
+  // HTML content is now designed to be 390px wide — fits any mobile viewport.
+  // No viewport-hacking tricks needed anymore.
   const holder = document.createElement('div');
-  holder.style.cssText = [
-    'position:absolute',
-    'left:-9999px',
-    'top:0',
-    `width:${CONTENT_WIDTH}px`,
-    'min-width:' + CONTENT_WIDTH + 'px',
-    'overflow:visible',
-    'background:#fffdf9',
-  ].join(';');
+  holder.style.cssText = 'position:absolute;left:-9999px;top:0;width:390px;background:#fffdf9;overflow:visible;';
   holder.innerHTML = html;
   document.body.appendChild(holder);
 
-  // Wait for full layout
   await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
 
   const el = holder.firstElementChild;
-  const elWidth  = Math.max(el.scrollWidth, CONTENT_WIDTH);
-  const elHeight = el.scrollHeight;
 
   const canvas = await html2canvas(el, {
     scale,
     backgroundColor: '#fffdf9',
     useCORS: true,
-    width: elWidth,
-    height: elHeight,
-    windowWidth: elWidth,
-    windowHeight: elHeight,
     scrollX: 0,
     scrollY: 0,
-    x: 0,
-    y: 0,
-    // KEY FIX: force the cloned document body to be as wide as the content.
-    // Without this, Android WebView clamps the render to ~360px viewport
-    // and clips anything wider (the right side of the PDF disappears).
-    onclone: (clonedDoc) => {
-      const s = 'width:' + elWidth + 'px !important;max-width:none !important;overflow:visible !important;';
-      clonedDoc.documentElement.style.cssText += s;
-      clonedDoc.body.style.cssText += s;
-      // Also widen the cloned holder so nothing clips
-      const clonedHolder = clonedDoc.body.querySelector('[style*="-9999px"]');
-      if (clonedHolder) {
-        clonedHolder.style.width = elWidth + 'px';
-        clonedHolder.style.minWidth = elWidth + 'px';
-        clonedHolder.style.overflow = 'visible';
-      }
-    },
   });
   document.body.removeChild(holder);
 
@@ -290,152 +267,139 @@ function buildDetailedReportHTML({
   const esc = s => String(s || '').replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
   const today = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
 
+  // Income rows — compact 4 columns (no house/receiptno to save space)
   const incomeRows = incomeList.map((r, i) => `
     <tr style="border-bottom:1px solid #f0e6d6;background:${i % 2 === 0 ? '#fff' : '#fcfaf6'};">
-      <td style="padding:6px 8px;color:#8a7a68;font-size:11px;">${i + 1}</td>
-      <td style="padding:6px 8px;font-weight:700;color:#2a1d12;">${esc(r.name || r.desc || '—')}</td>
-      <td style="padding:6px 8px;color:#6b5d52;font-size:11.5px;">${esc(r.house || '—')}</td>
-      <td style="padding:6px 8px;color:#8a7a68;font-size:11px;">${esc(r.receiptno || '—')}</td>
-      <td style="padding:6px 8px;color:#8a7a68;font-size:11px;white-space:nowrap;">${esc(r.date || '—')}</td>
-      <td style="padding:6px 8px;color:#7a1f2b;font-size:11.5px;">${esc(r.occasion || r.category || 'പണപ്പിരിവ്')}</td>
-      <td style="padding:6px 8px;text-align:right;font-weight:700;color:#1f9d55;white-space:nowrap;">${fmt(r.amount || r.paid || 0)}</td>
+      <td style="padding:5px 6px;color:#8a7a68;font-size:10px;">${i + 1}</td>
+      <td style="padding:5px 6px;font-weight:700;color:#2a1d12;font-size:11px;">${esc(r.name || r.desc || '—')}</td>
+      <td style="padding:5px 6px;color:#8a7a68;font-size:10px;white-space:nowrap;">${esc(r.date || '—')}</td>
+      <td style="padding:5px 6px;text-align:right;font-weight:700;color:#1f9d55;white-space:nowrap;font-size:11px;">${fmt(r.amount || r.paid || 0)}</td>
     </tr>
   `).join('');
 
+  // Expense rows — compact 3 columns
   const expenseRows = expenseList.map((r, i) => `
     <tr style="border-bottom:1px solid #f0e6d6;background:${i % 2 === 0 ? '#fff' : '#fcfaf6'};">
-      <td style="padding:6px 8px;color:#8a7a68;font-size:11px;">${i + 1}</td>
-      <td style="padding:6px 8px;color:#8a7a68;font-size:11px;white-space:nowrap;">${esc(r.date || '—')}</td>
-      <td style="padding:6px 8px;font-weight:600;color:#7a1f2b;font-size:11.5px;">${esc(r.category || 'മറ്റുള്ളവ')}</td>
-      <td style="padding:6px 8px;color:#2a1d12;font-weight:600;">${esc(r.desc || '—')}</td>
-      <td style="padding:6px 8px;text-align:right;font-weight:700;color:#c0392b;white-space:nowrap;">${fmt(r.amount || 0)}</td>
+      <td style="padding:5px 6px;color:#8a7a68;font-size:10px;">${i + 1}</td>
+      <td style="padding:5px 6px;color:#2a1d12;font-weight:600;font-size:11px;">${esc(r.desc || r.category || '—')}</td>
+      <td style="padding:5px 6px;text-align:right;font-weight:700;color:#c0392b;white-space:nowrap;font-size:11px;">${fmt(r.amount || 0)}</td>
     </tr>
   `).join('');
 
   const catRows = catExpenseSummary.map(c => `
     <tr>
-      <td style="padding:5px 8px;color:#2a1d12;">${esc(c.category)}</td>
-      <td style="padding:5px 8px;text-align:right;font-weight:700;color:#c0392b;">${fmt(c.amount)}</td>
-      <td style="padding:5px 8px;text-align:right;color:#8a7a68;font-size:11px;width:55px;">${c.pct}%</td>
+      <td style="padding:5px 8px;color:#2a1d12;font-size:11.5px;">${esc(c.category)}</td>
+      <td style="padding:5px 8px;text-align:right;font-weight:700;color:#c0392b;font-size:11.5px;">${fmt(c.amount)}</td>
+      <td style="padding:5px 8px;text-align:right;color:#8a7a68;font-size:11px;width:40px;">${c.pct}%</td>
     </tr>
   `).join('');
 
+  // NOTE: width is 390px — must fit within smallest Android viewport
   return `
-  <div style="width:760px;background:#fffdf9;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans Malayalam','Inter',sans-serif;color:#2a1d12;padding:34px 40px;">
+  <div style="width:390px;background:#fffdf9;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans Malayalam','Inter',sans-serif;color:#2a1d12;padding:20px 16px;box-sizing:border-box;">
+
     <!-- HEADER -->
-    <div style="text-align:center;border-bottom:2.5px solid #7a1f2b;padding-bottom:16px;margin-bottom:22px;">
-      <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;">
-        <img src="/icon.png" style="width:44px;height:44px;border-radius:10px;object-fit:cover;" />
-        <div style="font-size:24px;font-weight:800;color:#7a1f2b;letter-spacing:-0.2px;">ആലുമ്പിൽ ദേവസ്ഥാനം</div>
-      </div>
-      <div style="font-size:16px;font-weight:700;color:#5c1620;margin-top:2px;">${esc(periodTitle)}</div>
-      <div style="font-size:12px;color:#8a7a68;margin-top:4px;">തീയതി: ${today}</div>
+    <div style="text-align:center;border-bottom:2px solid #7a1f2b;padding-bottom:12px;margin-bottom:16px;">
+      <div style="font-size:20px;font-weight:800;color:#7a1f2b;">ആലുമ്പിൽ ദേവസ്ഥാനം</div>
+      <div style="font-size:13px;font-weight:700;color:#5c1620;margin-top:3px;">${esc(periodTitle)}</div>
+      <div style="font-size:10px;color:#8a7a68;margin-top:3px;">തീയതി: ${today}</div>
     </div>
 
-    <!-- SUMMARY KPI TILES -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;">
-      <div style="background:#ffffff;border:1.5px solid #d4edd9;border-radius:12px;padding:12px 14px;">
-        <div style="font-size:11.5px;color:#15803d;font-weight:700;">ആകെ വരവ് (INCOME)</div>
-        <div style="font-size:20px;font-weight:800;color:#15803d;margin-top:3px;">${fmt(totalIncome)}</div>
-        <div style="font-size:11px;color:#8a7a68;margin-top:3px;">പൈസ തന്നവർ: ${incomeList.length}</div>
-      </div>
-      <div style="background:#ffffff;border:1.5px solid #fad2d2;border-radius:12px;padding:12px 14px;">
-        <div style="font-size:11.5px;color:#b91c1c;font-weight:700;">ആകെ ചെലവ് (EXPENSE)</div>
-        <div style="font-size:20px;font-weight:800;color:#b91c1c;margin-top:3px;">${fmt(totalExpense)}</div>
-        <div style="font-size:11px;color:#8a7a68;margin-top:3px;">ഇടപാടുകൾ: ${expenseList.length}</div>
-      </div>
-      <div style="background:#ffffff;border:1.5px solid #ecdfca;border-radius:12px;padding:12px 14px;">
-        <div style="font-size:11.5px;color:#b8860b;font-weight:700;">കൈവശമുള്ള ബാക്കി (BALANCE)</div>
-        <div style="font-size:20px;font-weight:800;color:${netBalance >= 0 ? '#15803d' : '#b91c1c'};margin-top:3px;">${fmt(netBalance)}</div>
-        <div style="font-size:11px;color:#8a7a68;margin-top:3px;">${netBalance >= 0 ? 'നീക്കിയിരിപ്പ് മിച്ചം' : 'കമ്മി'}</div>
-      </div>
-    </div>
-
-    <!-- SECTION 1: INCOME / WHO GAVE MONEY -->
-    <div style="margin-bottom:26px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <div style="font-size:14px;font-weight:800;color:#15803d;display:flex;align-items:center;gap:6px;">
-          <span>1. വരവ് — ആരൊക്കെ പൈസ തന്നു (${incomeList.length})</span>
+    <!-- KPI TILES (stacked) -->
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+      <div style="background:#fff;border:1.5px solid #d4edd9;border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:10px;color:#15803d;font-weight:700;">ആകെ വരവ് (INCOME)</div>
+          <div style="font-size:10px;color:#8a7a68;">പൈസ തന്നവർ: ${incomeList.length}</div>
         </div>
-        <div style="font-size:13px;font-weight:800;color:#15803d;">ആകെ: ${fmt(totalIncome)}</div>
+        <div style="font-size:17px;font-weight:800;color:#15803d;">${fmt(totalIncome)}</div>
       </div>
+      <div style="background:#fff;border:1.5px solid #fad2d2;border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:10px;color:#b91c1c;font-weight:700;">ആകെ ചെലവ് (EXPENSE)</div>
+          <div style="font-size:10px;color:#8a7a68;">ഇടപാടുകൾ: ${expenseList.length}</div>
+        </div>
+        <div style="font-size:17px;font-weight:800;color:#b91c1c;">${fmt(totalExpense)}</div>
+      </div>
+      <div style="background:#fff;border:1.5px solid #ecdfca;border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:10px;color:#b8860b;font-weight:700;">കൈവശമുള്ള ബാക്കി (BALANCE)</div>
+          <div style="font-size:10px;color:#8a7a68;">${netBalance >= 0 ? 'നീക്കിയിരിപ്പ് മിച്ചം' : 'കമ്മി'}</div>
+        </div>
+        <div style="font-size:17px;font-weight:800;color:${netBalance >= 0 ? '#15803d' : '#b91c1c'};">${fmt(netBalance)}</div>
+      </div>
+    </div>
 
+    <!-- SECTION 1: INCOME -->
+    <div style="margin-bottom:18px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div style="font-size:12px;font-weight:800;color:#15803d;">1. വരവ് — ആരൊക്കെ പൈസ തന്നു (${incomeList.length})</div>
+        <div style="font-size:11px;font-weight:800;color:#15803d;">${fmt(totalIncome)}</div>
+      </div>
       ${incomeList.length === 0 ? `
-        <div style="padding:16px;text-align:center;background:#fff;border:1px dashed #ecdfca;border-radius:10px;color:#8a7a68;font-size:12px;">
+        <div style="padding:12px;text-align:center;background:#fff;border:1px dashed #ecdfca;border-radius:8px;color:#8a7a68;font-size:11px;">
           ഈ കാലയളവിൽ വരവുകളൊന്നും രേഖപ്പെടുത്തിയിട്ടില്ല
         </div>
       ` : `
-        <table style="width:100%;font-size:12px;border-collapse:collapse;background:#fff;border:1px solid #ecdfca;border-radius:8px;overflow:hidden;">
+        <table style="width:100%;font-size:11px;border-collapse:collapse;background:#fff;border:1px solid #ecdfca;">
           <thead>
             <tr style="background:#f5f0e6;font-weight:700;color:#5c1620;text-align:left;">
-              <th style="padding:7px 8px;width:30px;">#</th>
-              <th style="padding:7px 8px;">പേര്</th>
-              <th style="padding:7px 8px;">വീട് / വിലാസം</th>
-              <th style="padding:7px 8px;">രസീത് #</th>
-              <th style="padding:7px 8px;">തീയതി</th>
-              <th style="padding:7px 8px;">ഉത്സവം / വക</th>
-              <th style="padding:7px 8px;text-align:right;">തുക (₹)</th>
+              <th style="padding:5px 6px;width:24px;">#</th>
+              <th style="padding:5px 6px;">പേര്</th>
+              <th style="padding:5px 6px;">തീയതി</th>
+              <th style="padding:5px 6px;text-align:right;">തുക (₹)</th>
             </tr>
           </thead>
-          <tbody>
-            ${incomeRows}
-          </tbody>
+          <tbody>${incomeRows}</tbody>
           <tfoot>
             <tr style="background:#fbf7f0;font-weight:800;border-top:1.5px solid #ecdfca;">
-              <td colspan="6" style="padding:8px;text-align:right;">ആകെ ലഭിച്ച വരവ്:</td>
-              <td style="padding:8px;text-align:right;color:#15803d;">${fmt(totalIncome)}</td>
+              <td colspan="3" style="padding:6px;text-align:right;">ആകെ:</td>
+              <td style="padding:6px;text-align:right;color:#15803d;">${fmt(totalIncome)}</td>
             </tr>
           </tfoot>
         </table>
       `}
     </div>
 
-    <!-- SECTION 2: EXPENSES / WHAT WAS SPENT ON -->
-    <div style="margin-bottom:26px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <div style="font-size:14px;font-weight:800;color:#b91c1c;display:flex;align-items:center;gap:6px;">
-          <span>2. ചെലവ് — എന്തിനൊക്കെ ചെലവാക്കി (${expenseList.length})</span>
-        </div>
-        <div style="font-size:13px;font-weight:800;color:#b91c1c;">ആകെ: ${fmt(totalExpense)}</div>
+    <!-- SECTION 2: EXPENSES -->
+    <div style="margin-bottom:18px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div style="font-size:12px;font-weight:800;color:#b91c1c;">2. ചെലവ് — എന്തിനൊക്കെ (${expenseList.length})</div>
+        <div style="font-size:11px;font-weight:800;color:#b91c1c;">${fmt(totalExpense)}</div>
       </div>
-
       ${expenseList.length === 0 ? `
-        <div style="padding:16px;text-align:center;background:#fff;border:1px dashed #ecdfca;border-radius:10px;color:#8a7a68;font-size:12px;">
+        <div style="padding:12px;text-align:center;background:#fff;border:1px dashed #ecdfca;border-radius:8px;color:#8a7a68;font-size:11px;">
           ഈ കാലയളവിൽ ചെലവുകളൊന്നും രേഖപ്പെടുത്തിയിട്ടില്ല
         </div>
       ` : `
-        <table style="width:100%;font-size:12px;border-collapse:collapse;background:#fff;border:1px solid #ecdfca;border-radius:8px;overflow:hidden;">
+        <table style="width:100%;font-size:11px;border-collapse:collapse;background:#fff;border:1px solid #ecdfca;">
           <thead>
             <tr style="background:#fbf0d9;font-weight:700;color:#5c1620;text-align:left;">
-              <th style="padding:7px 8px;width:30px;">#</th>
-              <th style="padding:7px 8px;">തീയതി</th>
-              <th style="padding:7px 8px;">ഇനം (Category)</th>
-              <th style="padding:7px 8px;">വിവരണം</th>
-              <th style="padding:7px 8px;text-align:right;">തുക (₹)</th>
+              <th style="padding:5px 6px;width:24px;">#</th>
+              <th style="padding:5px 6px;">വിവരണം / ഇനം</th>
+              <th style="padding:5px 6px;text-align:right;">തുക (₹)</th>
             </tr>
           </thead>
-          <tbody>
-            ${expenseRows}
-          </tbody>
+          <tbody>${expenseRows}</tbody>
           <tfoot>
             <tr style="background:#fbf7f0;font-weight:800;border-top:1.5px solid #ecdfca;">
-              <td colspan="4" style="padding:8px;text-align:right;">ആകെ ചെലവ്:</td>
-              <td style="padding:8px;text-align:right;color:#b91c1c;">${fmt(totalExpense)}</td>
+              <td colspan="2" style="padding:6px;text-align:right;">ആകെ:</td>
+              <td style="padding:6px;text-align:right;color:#b91c1c;">${fmt(totalExpense)}</td>
             </tr>
           </tfoot>
         </table>
       `}
     </div>
 
-    <!-- SECTION 3: CATEGORY SUMMARY (If expenses exist) -->
+    <!-- SECTION 3: CATEGORY SUMMARY -->
     ${catExpenseSummary.length > 0 ? `
-      <div style="margin-bottom:26px;">
-        <div style="font-size:13.5px;font-weight:800;color:#5c1620;margin-bottom:8px;">3. ചെലവ് — ഇനം തിരിച്ച് സംഗ്രഹം</div>
-        <table style="width:100%;font-size:12px;border-collapse:collapse;background:#fff;border:1px solid #ecdfca;">
+      <div style="margin-bottom:18px;">
+        <div style="font-size:12px;font-weight:800;color:#5c1620;margin-bottom:6px;">3. ചെലവ് — ഇനം തിരിച്ച് സംഗ്രഹം</div>
+        <table style="width:100%;font-size:11.5px;border-collapse:collapse;background:#fff;border:1px solid #ecdfca;">
           <tr style="background:#fbf0d9;font-weight:700;color:#5c1620;">
-            <th style="padding:6px 10px;text-align:left;">ഇനം</th>
-            <th style="padding:6px 10px;text-align:right;">തുക</th>
-            <th style="padding:6px 10px;text-align:right;">ശതമാനം</th>
+            <th style="padding:5px 8px;text-align:left;">ഇനം</th>
+            <th style="padding:5px 8px;text-align:right;">തുക</th>
+            <th style="padding:5px 8px;text-align:right;">%</th>
           </tr>
           ${catRows}
         </table>
@@ -443,11 +407,16 @@ function buildDetailedReportHTML({
     ` : ''}
 
     <!-- SIGNATURES -->
-    <div style="border-top:1.5px solid #ecdfca;padding-top:28px;margin-top:28px;display:flex;justify-content:space-between;color:#6b5d52;font-size:11.5px;font-weight:600;">
-      <div>പ്രസിഡന്റ്: ___________________</div>
-      <div>സെക്രട്ടറി: ___________________</div>
-      <div>ട്രഷറർ: ___________________</div>
+    <div style="border-top:1.5px solid #ecdfca;padding-top:16px;margin-top:4px;">
+      <div style="display:flex;justify-content:space-between;color:#6b5d52;font-size:10px;font-weight:600;">
+        <div>പ്രസിഡന്റ്: ____________</div>
+        <div>സെക്രട്ടറി: ____________</div>
+      </div>
+      <div style="margin-top:10px;color:#6b5d52;font-size:10px;font-weight:600;">
+        <div>ട്രഷറർ: ____________</div>
+      </div>
     </div>
+
   </div>`;
 }
 
