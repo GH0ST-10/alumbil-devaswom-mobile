@@ -201,29 +201,51 @@ function buildStatementHTML(pirivuRecords, ledgerRecords) {
 }
 
 async function renderHTMLToPDF(html, scale = 2) {
+  // Content width used in buildStatementHTML / buildDetailedReportHTML
+  // Use a fixed wide viewport so mobile WebViews don't clip the layout
+  const CONTENT_WIDTH = 840;
+
   const holder = document.createElement('div');
-  holder.style.position = 'fixed';
-  holder.style.left = '-9999px';
-  holder.style.top = '0';
-  // Force holder wide enough to contain the full layout (760px content + 80px padding)
-  // This prevents mobile viewports from clipping the right side of the PDF
-  holder.style.width = '840px';
-  holder.style.overflow = 'visible';
+  holder.style.cssText = [
+    'position:fixed',
+    'left:-9999px',
+    'top:0',
+    `width:${CONTENT_WIDTH}px`,
+    'min-width:' + CONTENT_WIDTH + 'px',
+    'overflow:visible',
+    'background:#fffdf9',
+  ].join(';');
   holder.innerHTML = html;
   document.body.appendChild(holder);
+
+  // Two animation frames so the browser lays out the full DOM width
   await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
 
-  const canvas = await html2canvas(holder.firstElementChild, {
+  const el = holder.firstElementChild;
+  // Measure the actual rendered width (never less than CONTENT_WIDTH)
+  const elWidth  = Math.max(el.scrollWidth, CONTENT_WIDTH);
+  const elHeight = el.scrollHeight;
+
+  const canvas = await html2canvas(el, {
     scale,
     backgroundColor: '#fffdf9',
     useCORS: true,
-    width: holder.firstElementChild.scrollWidth,
-    windowWidth: 840
+    // Explicitly tell html2canvas the full element dimensions
+    width: elWidth,
+    height: elHeight,
+    // Pretend the window is wide — prevents internal viewport clamping
+    windowWidth: elWidth,
+    windowHeight: elHeight,
+    scrollX: 0,
+    scrollY: 0,
+    x: 0,
+    y: 0,
   });
   document.body.removeChild(holder);
 
   const pxToMm = px => px * 0.264583;
-  const wMm = pxToMm(canvas.width / scale);
+  // canvas.width is already at device-pixel (scale×) resolution
+  const wMm = pxToMm(canvas.width  / scale);
   const hMm = pxToMm(canvas.height / scale);
   const doc = new jsPDF({ unit: 'mm', format: [wMm, hMm] });
   doc.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, wMm, hMm);
